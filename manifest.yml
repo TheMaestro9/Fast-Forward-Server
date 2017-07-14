@@ -1,0 +1,7 @@
+---
+applications:
+- name:    tryingdb
+  host:    walidPC
+  memory:  256M
+  services:
+    - WelloMySql
