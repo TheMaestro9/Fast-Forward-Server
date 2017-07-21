@@ -18,7 +18,30 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var url = require ('url'); 
+var url = require ('url');
+/*
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', '*');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+*/
+var cors = require('cors');
+
+app.use(cors())  ;
 app.use(bodyParser.urlencoded({
   extended: false
 }));
@@ -39,7 +62,7 @@ var cfenv = require('cfenv');
 var appenv = cfenv.getAppEnv();
 
 //Within the application environment (appenv) there's a services object
-/*
+
 var services = appenv.services;
 
 // The services object is a map named by service so we extract the one for PostgreSQL
@@ -103,17 +126,139 @@ app.get("/words", function(request, response) {
     });
 
 });
-*/
-// this is the local data base initalizatioin : 
-var conn = mysql.createConnection({
-  host: "local host", 
-  port: "3306", 
-  user: "Walid Moussa", 
-  password: "wal2191995"
-  
 
+
+app.get("/query", function(request, response) {
+
+    // execute a query on our database
+    var qstring = request.query.q ; 
+    console.log(qstring); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        console.log(result);
+       response.send(result);
+      }
+
+    });
 });
 
+
+
+app.get("/login", function(request, response) {
+
+    var UserName = request.query.user_name ; 
+    var password = request.query.password ; 
+    var toSend = {
+      "result" : false  
+    } ; 
+    // execute a query on our database
+    var qstring = "select user_name , user_id from user where user_name ='"+UserName+"' and password='"+password +"'"; 
+    console.log("the query: "+qstring +"\n"); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        if (result.length === 0)
+        {
+         response.send(toSend); 
+        }
+        else {
+          toSend.result= true ;
+          toSend  = Object.assign(toSend , result[0]) ;
+          response.send (toSend);  
+        }
+      }
+
+    });
+});
+
+
+app.get("/allVideos", function(request, response) {
+
+    var UserID = request.query.user_id ;  
+    var toSend = {
+      "result" : false  
+    } ; 
+    var videoArr = [] ; 
+    // execute a query on our database
+    var qstring = "select * from company_video;" ;  
+    console.log("the query: "+qstring +"\n"); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        if (result.length === 0)
+        {
+         response.send(toSend); 
+        }
+        else {
+          toSend.result= true ;
+          for (i = 0 ; i < result.length ; i ++)
+              videoArr.push(result[i]); 
+          response.send (videoArr);  
+        }
+      }
+
+    });
+});
+
+app.get("/company_details", function(request, response) {
+
+    var companyID = request.query.company_id ;  
+    var toSend = {} ; 
+    // execute a query on our database
+    var qstring = "select * from company where company_id ="+companyID +";" ;  
+    console.log("the query: "+qstring +"\n"); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+          qstring= "select COUNT(*) from user_follow_company   WHERE company_id =" +companyID +";" ;  
+              connection.query(qstring , function (err, result2) {
+                if (err) {
+                  console.log(err);
+                response.status(500).send(err);
+                } else {
+                    console.log(result2[0]["COUNT(*)"]); 
+                    toSend["followers"] =result2[0]["COUNT(*)"] ; 
+                    toSend = Object.assign (result[0] , toSend); 
+                    response.send (toSend);  
+                }
+
+            });
+      }
+    });
+
+    console.log(toSend)
+});
+
+app.get("/get_company_simulations", function(request, response) {
+    
+    var companyID = request.query.company_id ;
+    var qstring = "select * from simulation_date , simulation where company_id=" +companyID +
+                  " and simulation_date.simulation_id = simulation.simulation_id;" ;  
+    console.log("the query: "+qstring +"\n"); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        response.send(result) ; 
+      }
+
+    });
+  
+});
+
+// this is the local data base initalizatioin : 
+
+/*
 conn.connect(function (err){
   if (err) throw err ;
   console.log("connected"); 
@@ -165,6 +310,7 @@ app.get("/echo", function(request, response) {
 });
 
 // Now we go and listen for a connection.
+*/
 app.listen(port);
 
 require("cf-deployment-tracker-client").track();

@@ -9,7 +9,8 @@
         "http-proxy": "^1.8.1",
         "mysql": "*",
         "cfenv": "1.0.x",
-        "cf-deployment-tracker-client": "*"
+        "cf-deployment-tracker-client": "*",
+		"cors": "*"
     },
     "main": "server.js",
     "scripts": {
