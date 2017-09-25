@@ -1,7 +1,7 @@
 ---
 applications:
 - name:    tryingdb
-  host:    walidPC
+  host:    ffserver
   memory:  256M
   services:
-    - WelloMySql
+    - FFDB
