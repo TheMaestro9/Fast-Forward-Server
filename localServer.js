@@ -304,24 +304,11 @@ app.get("/comm", function(request, response) {
 
 app.get("/get-promo-code-discount", function(request, response) {
 
-    var pormoCode = request.query.promo_code ;
+    var promoCode = request.query.promo_code ;
     var companyID = request.query.company_id ;  
-    var toSend = {
-      "result" : false 
-    }
-    str ="select * from company_promo_code where (company_id ="+companyID+" or company_id = 0)" + 
-         " and promo_code='"+pormoCode+"'" ;  
-    console.log(str); 
-     connection.query(str , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          
-          response.send(result);
-          }
-           
-    });
+   
+   var CompanyServer = require ("./page_modules/CompanyServer") ; 
+   CompanyServer.GetPromoCodeDiscount(connection , response , promoCode , companyID); 
     
 });
 
@@ -1702,30 +1689,10 @@ app.get("/simulation-applicant", function(request, response) {
 app.get("/company_details", function(request, response) {
 
     var companyID = request.query.company_id ;  
-    var toSend = {} ; 
-    // execute a query on our database
-    var qstring = "select * from company where company_id ="+companyID +";" ;  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          qstring= "select COUNT(*) from user_follow_company   WHERE company_id =" +companyID +";" ;  
-              connection.query(qstring , function (err, result2) {
-                if (err) {
-                  console.log(err);
-                response.status(500).send(err);
-                } else {
-                    console.log(result2[0]["COUNT(*)"]); 
-                    toSend["followers"] =result2[0]["COUNT(*)"] ; 
-                    toSend = Object.assign (result[0] , toSend); 
-                    response.send (toSend);  
-                }
+    var CompanyServer  = require("./page_modules/companyServer") ; 
 
-            });
-      }
-    });
+    CompanyServer.GetCompanyDetails(connection , response,companyID ) ; 
+
 });
 
 
@@ -1864,28 +1831,9 @@ app.get("/get_company_simulations2", function(request, response) {
     
     var companyID = request.query.company_id ;
     var userID = request.query.user_id ; 
-    var qstring = "select * from simulation where company_id=" +companyID+ ";";
-                 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-        var counter = 0 ; 
-       for (i = 0  ; i < result.length ; i++){
-          
-         getSimDetails(result, i ,userID, function (ResutWithDates){
-            result = ResutWithDates ; 
-            counter += 1 ; 
-            if (counter === result.length)
-               response.send (result) ;
-         });
-       }
-       
-      }
-
-    });
+   
+   var Compnay = require("./page_modules/companyServer") ; 
+   Compnay.GetCompanySimulations (connection , response , companyID , userID) ; 
   
 });
 
@@ -2138,7 +2086,14 @@ function insertUserVote (userID , simDateID ,callback){
 
 }
 
-
+app.get("/apply", function(request, response) {
+    
+    var simulationDateID = request.query.simulation_date_id ;
+    var userID = request.query.user_id;  
+   
+   var Company = require("./page_modules/companyServer") ;
+   Company.apply(connection, response, simulationDateID , userID) ;  
+});
 
 // Now we go and listen for a connectionection.
 app.listen(port);
