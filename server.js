@@ -1813,26 +1813,13 @@ app.get("/unfollow-company", function(request, response) {
    
 });
 
+
 app.get("/apply", function(request, response) {
     
     var simulationDateID = request.query.simulation_date_id ;
     var userID = request.query.user_id;  
-    var toSend =  {
-      "result": "pending approval" 
-    } ; 
-    var qstring = "INSERT INTO applications VALUES("+userID+","+simulationDateID+",'pending approval');";  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-        response.send(toSend); 
-      }
-
-    });
-   
+     var Company = require("./page_modules/companyServer") ;
+     Company.apply(connection, response, simulationDateID , userID) ;  
 });
 app.get("/queryList", function(request, response) {
     
@@ -1943,107 +1930,20 @@ app.get("/allVideos", function(request, response) {
 app.get("/company_details", function(request, response) {
 
     var companyID = request.query.company_id ;  
-    var toSend = {} ; 
-    // execute a query on our database
-    var qstring = "select * from company where company_id ="+companyID +";" ;  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          qstring= "select COUNT(*) from user_follow_company   WHERE company_id =" +companyID +";" ;  
-              connection.query(qstring , function (err, result2) {
-                if (err) {
-                  console.log(err);
-                response.status(500).send(err);
-                } else {
-                    console.log(result2[0]["COUNT(*)"]); 
-                    toSend["followers"] =result2[0]["COUNT(*)"] ; 
-                    toSend = Object.assign (result[0] , toSend); 
-                    response.send (toSend);  
-                }
+    var CompanyServer  = require("./page_modules/companyServer") ; 
 
-            });
-      }
-    });
+    CompanyServer.GetCompanyDetails(connection , response,companyID ) ; 
 
-    console.log(toSend)
 });
 
 
-function getSimApplicants (simulations , index , callback){
 
-
-
-var qstring = "select count(*) as count from applications where simulation_date_id =" +simulations[index].simulation_date_id  ; 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-          simulations[index]["applicants_no"] = result[0].count ; 
-          simulations[index].date= TransfromDate( simulations[index].date ) ; 
-          callback (simulations) ; 
-      }
-
-
-
-    });
-
-}
 app.get("/get_company_simulations", function(request, response) {
     
     var companyID = request.query.company_id ;
-    var qstring = "select * from simulation_date , simulation where company_id=" +companyID +
-                  " and simulation_date.simulation_id = simulation.simulation_id and votes = 0" ;  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-          var counter = 0 ; 
-       for (i = 0  ; i < result.length ; i++){
-          
-         getSimApplicants(result, i , function (ResutWithAppNum){
-            result = ResutWithAppNum ; 
-            counter += 1 ; 
-            if (counter === result.length)
-               response.send (result) ;
-         });
-       }
-      //  response.send(result) ; 
-      }
-
-    });
-    // var companyID = request.query.company_id ;
-    // var qstring = "select * from simulation where company_id=" +companyID+ ";";
-                 
-    // console.log("the query: "+qstring +"\n"); 
-    // connection.query(qstring , function (err, result) {
-    //   if (err) {
-    //     console.log(err);
-    //    response.status(500).send(err);
-    //   } else {
-    //     var counter = 0 ; 
-    //    for (i = 0  ; i < result.length ; i++){
-          
-    //      getSimDetails(result, i , function (ResutWithDates){
-    //         result = ResutWithDates ; 
-    //         counter += 1 ; 
-    //         if (counter === result.length)
-    //            response.send (result) ;
-    //      });
-    //    }
-       
-    //   }
-
-    // });
-  
+   
+    var AcceptApplicants = require("./page_modules/acceptApplicantsServer") ;
+    AcceptApplicants.GetCompanySimulations(connection, response, companyID) ; 
 });
 
 app.get("/get-field-simulation", function(request, response) {
@@ -2163,29 +2063,10 @@ app.get("/get_company_simulations2", function(request, response) {
     
     var userID = request.query.user_id ;
     var companyID = request.query.company_id ;
-    var qstring = "select * from simulation where company_id=" +companyID+ ";";
-                 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-        var counter = 0 ; 
-       for (i = 0  ; i < result.length ; i++){
-          
-         getSimDetails(result, i ,userID,  function (ResutWithDates){
-            result = ResutWithDates ; 
-            counter += 1 ; 
-            if (counter === result.length)
-               response.send (result) ;
-         });
-       }
-       
-      }
 
-    });
-  
+    var Company = require("./page_modules/companyServer") ;
+   Company.GetCompanySimulations(connection, response, companyID , userID)
+   
 });
 
 function checkSimExist (companyID, fieldID , name ,price , callback) 
