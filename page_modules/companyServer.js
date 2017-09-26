@@ -48,7 +48,7 @@ exports.GetCompanyDetails = function (connection ,response ,companyID   ) {
  
 exports.GetCompanySimulations  = function (connection , response , companyID , userID) { 
 
-     var qstring = "select * from simulation where company_id=" +companyID+ ";";
+    var qstring = "select * from simulation where company_id=" +companyID+ ";";
                  
     console.log("the query: "+qstring +"\n"); 
     connection.query(qstring , function (err, result) {
@@ -59,7 +59,7 @@ exports.GetCompanySimulations  = function (connection , response , companyID , u
         var counter = 0 ; 
        for (i = 0  ; i < result.length ; i++){
           
-         getSimDetails(connection , result, i ,userID, function (ResutWithDates){
+         getSimDetails(connection , result, i ,userID,  function (ResutWithDates){
             result = ResutWithDates ; 
             counter += 1 ; 
             if (counter === result.length)
@@ -72,68 +72,10 @@ exports.GetCompanySimulations  = function (connection , response , companyID , u
     });
 }
 
-function getMonthName (monthNumber){
-
-  switch(monthNumber){
-
-    case 0 : 
-      return "January" ; 
-     // break ; 
-    case 1 : 
-      return "February" ;
-    case 2 : 
-      return "March"  ; 
-    case 3 : 
-      return "April"  ; 
-    case 4 : 
-      return "May" ;
-    case 5 : 
-      return "June"  ; 
-    case 6 : 
-      return "July" ;
-    case 7 : 
-      return "August"  ; 
-    case 8 : 
-      return "September" ;
-    case 9 : 
-      return "October"  ; 
-    case 10 : 
-      return "November" ;
-    case 11 : 
-      return "December"  ; 
-
-  }
-}
-function TransfromDate (date)
-{
-
-  //svar dd = new Date () ; 
-  //dd.getMonth ; 
-  var send ; 
-    if(date.getHours()==2)
-    {
-      send =getMonthName(date.getMonth() );
-       
-      console.log ("month" , send) ; 
-    }
-    else { 
-      var datos = date.toDateString() ;
-      var time = date.getHours() ; 
-      var Label = " AM"; 
-      if (time > 12 ){
-        time = time - 12 ; 
-        Label =" PM"; 
-      }
-      //console.log(time); 
-      send = datos +" at " + time +""+Label ; 
-    }
-    return send ; 
-   // console.log(send); 
-}
 
 
 function getSimDetails (connection , simulations , index , userID,   callback ){
-      var SimID = simulations[index].simulation_id ; 
+    var SimID = simulations[index].simulation_id ; 
       // get dates 
     var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" +SimID +";" ;  
     console.log("the query: "+qstring +"\n"); 
@@ -149,8 +91,10 @@ function getSimDetails (connection , simulations , index , userID,   callback ){
           "date_id":"" , 
           "date":""  
         } ; 
+
+           var GHF = require ("./GlobalHelperFunctions") ; 
            temp.date_id = result[i].simulation_date_id ;
-           temp.date =  TransfromDate( result[i].date) ;
+           temp.date = GHF.TransfromDate( result[i].date) ;
            Dates.push(temp) ; 
            console.log(result[i]) ;
         }
@@ -158,7 +102,7 @@ function getSimDetails (connection , simulations , index , userID,   callback ){
         simulations[index]["dates"] =Dates; 
 
         getNumberOfApplicants(connection , simulations , index ,SimID, function(TheSim){
-              getSimulationStatus(connection,TheSim , index ,SimID , userID , function(TheFinalSim){
+              getSimulationStatus(connection , TheSim , index ,SimID , userID , function(TheFinalSim){
                             callback(TheFinalSim) ; 
               });
 
@@ -166,6 +110,7 @@ function getSimDetails (connection , simulations , index , userID,   callback ){
       }
 
     });
+  
   
 
 }
