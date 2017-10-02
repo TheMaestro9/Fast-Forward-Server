@@ -2038,6 +2038,18 @@ var qstring ="select simulation_date_id from simulation_date where "+
     });
 
 }
+
+app.get ("/user_delete_simulation" ,  function(request, response) {
+
+  var UserID = request.query.user_id ; 
+  var simulationID = request.query.simulation_id ; 
+
+  
+   var profileServer = require ("./page_modules/profileServer") ; 
+    profileServer.DeleteUserSimulation(connection , response , UserID , simulationID  ); 
+
+});
+
 app.get ("/add-simulation" ,  function(request, response) {
     
     var companyID = request.query.company_id ;
