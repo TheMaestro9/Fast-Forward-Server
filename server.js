@@ -348,39 +348,9 @@ app.post("/edit-user", function(request, response) {
     var school = request.body.school ; 
     var phone_no = request.body.phone_no ;
 
-     var toSend = {
-        "result" : false , 
-      //  "name": "",
-        "msg" : ""}
-    var qstring = "UPDATE  user SET user_name ='"+ userName+ 
-                                   "', degree = '"+degree+
-                                   "', user_email='"+user_email+ 
-                                   "', school ='"+school+
-                                   "', phone_no='"+phone_no+
-                                   "' where user_id ="+userID;  
-    console.log("the query: "+qstring +"\n"); 
-     connection.query(qstring , function (err, result) {
-                  if (err) {
-                    console.log(err.message); 
-                    if (err.message.match("phone") && err.message.match("Duplicate")){
-                      toSend.msg = "this phone number already exist"; 
-                      response.send(toSend); 
-                    }
-                   else if (err.message.match("user_email") && err.message.match("Duplicate")){
-                       toSend.msg = "this email already exist"; 
-                      response.send(toSend); 
-                    }
-                    else 
-                      response.send(err); 
-                    
-                } else {
-                  toSend.result = true ; 
-                  //toSend.name= UserName ; 
-                  response.send(toSend) ;
-                }
-
-        
-    });
+      var profileServer = require ("./page_modules/profileServer") 
+    profileServer.EditUser(connection , response , UserName 
+    , degree ,user_email , school , phone_no , userID  ); 
    
 });
 app.get("/query", function(request, response) {
@@ -420,35 +390,9 @@ app.get("/login", function(request, response) {
 
     var UserEmail = request.query.user_email ; 
     var password = request.query.password ; 
-    var toSend = {
-      "result" : false  
-    } ; 
-    // execute a query on our database
-    var qstring = "select user_name , user_id , company_or_not from user where user_email ='"+UserEmail+"' and password='"+password +"'"; 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-        if (result.length === 0)
-        {
-         response.send(toSend); 
-        }
-        else {
-
-          checkExpo (result[0].user_id , function(reso){
-
-              toSend.result= true ;
-              toSend  = Object.assign(toSend , reso) ;
-              toSend  = Object.assign(toSend , result[0]) ;
-              response.send (toSend);  
-          }) ; 
-          
-        }
-      }
-
-    });
+   
+   var loginServer = require ("./page_modules/loginServer") 
+    loginServer.Login(connection , response , UserEmail, password  ); 
 });
 
 app.get("/login-fb", function(request, response) {
@@ -557,17 +501,17 @@ function insertInterests (userID , interests){
 
 }
 
-function insertExpo (userID){
+// function insertExpo (userID){
 
       
-    qstring = "insert into user_attending_expo values ("+userID+")" ; 
-    console.log(qstring); 
-    connection.query(qstring , function (err, result) {
+//     qstring = "insert into user_attending_expo values ("+userID+")" ; 
+//     console.log(qstring); 
+//     connection.query(qstring , function (err, result) {
       
-    });
+//     });
   
 
-}
+// }
 
 app.post("/register3", function(request, response) {
 
@@ -622,10 +566,10 @@ app.post("/register3", function(request, response) {
                       toSend["user_id"] = UID[0].user_id ; 
                       insertUserPormoCode(UID[0].user_id , promoCode); 
 
-                      if(typeof expo!= "undefined"){
-                            if(expo ===true)
-                              insertExpo(UID[0].user_id) ; 
-                      }
+                      // if(typeof expo!= "undefined"){
+                      //       if(expo ===true)
+                      //         insertExpo(UID[0].user_id) ; 
+                      // }
                       response.send(toSend) ;
                   });
                   
@@ -691,10 +635,10 @@ app.post("/register2", function(request, response) {
                       insertInterests(UID[0].user_id , interests) ; 
                       toSend["user_id"] = UID[0].user_id ; 
                       insertUserPormoCode(UID[0].user_id , promoCode); 
-                        if(typeof expo!= "undefined"){
-                            if(expo ===true)
-                              insertExpo(UID[0].user_id) ; 
-                      }
+                      //   if(typeof expo!= "undefined"){
+                      //       if(expo ===true)
+                      //         insertExpo(UID[0].user_id) ; 
+                      // }
                       response.send(toSend) ;
                   });
                   
@@ -835,16 +779,9 @@ app.get("/register", function(request, response) {
 app.get("/user_info", function(request, response) {
 
     var userID = request.query.id  
-    qstring = "select * from user where user_id="+ userID + ";" ; 
-    console.log(qstring); 
-    connection.query(qstring ,  function (err, result , field ) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          response.send(result[0]) ;
-        }
-  });
+  
+   var profileServer = require ("./page_modules/profileServer") 
+    profileServer.GetUserInfo(connection , response , userID  ); 
   
 });
 
@@ -852,23 +789,10 @@ app.get("/user_simulations", function(request, response) {
 
     var userID = request.query.id  ;
 
-    qstring = " select company_name, profile_pic_link,simulation_name , date , status , price from company, simulation , simulation_date , applications"+
-              " where user_id="+ userID + 
-              " and simulation_date.simulation_id = simulation.simulation_id and company.company_id = simulation.company_id "+
-              " and applications.simulation_date_id = simulation_date.simulation_date_id;" ; 
-    console.log(qstring); 
-    connection.query(qstring ,  function (err, result , field ) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          for ( i = 0 ; i < result.length ; i++){
-             result[i].date = TransfromDate( result[i].date)  ;
-          }
-          
-          response.send(result) ;
-        }
-  });
+    
+
+   var profileServer = require ("./page_modules/profileServer") 
+    profileServer.GetUserSimulations(connection , response , userID  ); 
   
 });
 
@@ -972,8 +896,12 @@ var req = unirest("POST", "https://accept.paymobsolutions.com/api/auth/tokens");
 
   
 }
-function CreateOrder (data , callback) {
+function CreateOrder (data , UserID, Price , SimulationDateID,  callback) {
 
+
+console.log("UserID", UserID); 
+console.log("Price", Price); 
+console.log("simID", SimulationDateID); 
 var unirest = require("unirest"); 
 
 //var unirest = require("unirest");
@@ -993,9 +921,10 @@ req.send({
   "delivery_needed": "false",
   "merchant_id":data.Mid,
   "merchant_order_id": RandomStringGen(20),
-  "amount_cents": "25000",
+  "amount_cents": Price +"00",
   "currency": "EGP",
-  "items": [],
+  "simulation_date_id": SimulationDateID,
+  "user_id" : UserID , 
   "shipping_data":{
     "first_name": "test_user", 
     "phone_number": "+201003978030", 
@@ -1007,7 +936,8 @@ req.send({
     "building": "4055",
     "postal_code": "33221",
     "country": "EG",
-    "city": "Cairo"
+    "city": "Cairo",
+    "user_id": UserID
   }
 });
 
@@ -1317,12 +1247,17 @@ function checkExpo(userId , callback) {
 
 }
 
-
-app.get("/test", function(request, response) {
+app.post("/test", function(request, response) {
     
+    var UserID = request.body.user_id ; 
+    var Price = request.body.price ; 
+    var simulationDateID =request.body.simulation_date_id ; 
     AuthenticationRequest(function (recObj){
    //   InsertGarbage("Finished the first step");
-      CreateOrder(recObj , function (dataRecieved1){
+  // console.log("UserID", UserID); 
+//console.log("Price", Price); 
+//console.log("simID", SimulationDateID); 
+      CreateOrder(recObj ,UserID ,Price , simulationDateID ,  function (dataRecieved1){
              // InsertGarbage("data recived after the second step is"+dataRecieved1.orderId) ;
               CreatePaymentKey (dataRecieved1 , function(dataRecieved2){
                               //  var sendReq  = require ('request') ; 
@@ -1351,7 +1286,6 @@ app.get("/test", function(request, response) {
       });
     });
  }) ;
-
  app.get("/test1", function(request, response) {
     
   
@@ -1399,8 +1333,8 @@ app.post("/paymob_notification_callback?hmac=9FAEDD1FF8E8B2E9B78E6BDB60C2A14A", 
  app.post("/paymob_notification_callback", function(request, response) {
     
     console.log("i have got a biiig response", request.body ) ; 
-    var email = request.body.obj.order.shipping_data.email ; 
-    var str = "INSERT INTO Garbage VALUES('HELLO POst "+email+"');"
+    var UserID = request.body.obj.order.shipping_data.user_id ; 
+    var str = "INSERT INTO Garbage VALUES('HELLO POst "+UserID+"');"
     connection.query(str , function (err, result) {
       if (err) {
         console.log(err);
@@ -1759,37 +1693,13 @@ app.get("/get-promo-code-discount", function(request, response) {
     });
     
 });
-   
+
 app.get("/get-applicants", function(request, response) {
 
     var simDateID = request.query.simulation_date_id ; 
-    var toSend = {
-      "accepted" : [] , 
-      "applied" : []  
-    }
-
-
-    str = "select user_name , rating , degree , major , user.user_id , status from user , applications where " + 
-          " applications.user_id = user.user_id and simulation_date_id= " +simDateID ; 
-    console.log(str); 
-     connection.query(str , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          for(i = 0 ; i < result.length ; i++)
-          {
-            if (result[i].status==="accepted")
-              toSend.accepted.push(result[i])
-            else
-              toSend.applied.push(result[i])
-
-          }
-          response.send(toSend);
-          }
-           
-    });
-    
+   
+    var applicantsServer = require ("./page_modules/applicantsServer") 
+    applicantsServer.GetApplicants(connection , response , simDateID  ); 
 });
 
 
