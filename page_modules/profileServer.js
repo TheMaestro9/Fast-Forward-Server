@@ -75,3 +75,16 @@ exports.EditUser = function (connection , response  , userName
     });
 
 }
+
+exports.DeleteUserSimulation =  function (connection , response , userID , simulationID){
+  var qstring = "delete from applications where user_id="+userID+ " and simulation_date_id="+simulationID;
+  connection.query(qstring , function (err, result) {
+  if (err) {
+    console.log(err.message); 
+    response.send(err) ;
+  } else {
+  console.log("deleted successfully");
+  response.send("deleted") ; 
+  }
+  });
+} 
