@@ -1,0 +1,181 @@
+set @@auto_increment_increment =1 ; 
+
+CREATE TABLE user ( user_name VARCHAR(50), password VARCHAR(40), major varchar(100) DEFAULT "NOTHING" ,  birth_date VARCHAR(40), degree VARCHAR(40), user_email VARCHAR(50) UNIQUE, school VARCHAR(40), phone_no VARCHAR(20) UNIQUE, rating INT , user_image_link VARCHAR(255) DEFAULT NULL, company_or_not TINYINT DEFAULT 0 , user_id INT  AUTO_INCREMENT , PRIMARY KEY (user_id) ) ; 
+
+ALTER TABLE user AUTO_INCREMENT=1;
+
+INSERT  INTO user ( user_name, password ,birth_date, degree , user_email , school , phone_no  , rating , user_image_link) 
+
+VALUES  ( 'Mohamed Salah' , '123456' ,'1999-1-15 18:00:00','Highschool' , 'salah@gmail.com' , 'dar el falah school' , '01044898473' , 4 ,'https://media.nngroup.com/media/people/photos/IMG_2366-copy-400x400.jpg.400x400_q95_autocrop_crop_upscale.jpg') , 
+	( 'Marawan' , '111111' , '2000-3-15 18:00:00','Highschool' , 'maro@gmail.com' , 'dar el falah school' , '01133223323' , 3,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN1yluZMpjcPLDrLn1cvbDe-R-uIte0kl5t4q6PyfUipYBRstD' ) , 
+	( 'Walid Moussa' , '221' ,'2001-9-15 18:00:00','University' , 'wello@gmail.com' , 'dar el falah school' , '01112123323' , 5,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkIzTVGyP4xWTBn5OFGWp6-6d5XjH1CzOoAdzCfoeG4Sf9z9b3') ; 
+
+CREATE TABLE company ( company_name VARCHAR(50), description VARCHAR(8000),company_email VARCHAR(50) , location VARCHAR(100), rating INT, profile_pic_link VARCHAR(255) , cover_pic_link VARCHAR(255),  company_id INT  AUTO_INCREMENT , PRIMARY KEY (company_id) ) ; 
+
+ALTER TABLE company AUTO_INCREMENT=1;
+
+INSERT INTO company ( company_name , description ,company_email, location , rating , profile_pic_link , cover_pic_link ) 
+VALUES ( 'Monkeys in tuxedoes' , "Monkeys in Tuxedos LLC is a Creative Studio, aiming to shake people's perceptions of the world." ,'Daro@hotmail.com', '6th of October , near mall of arabia', 4 , 'https://fastforwardsim.com/alpha/monklogo.jpg', 'https://fastforwardsim.com/alpha/monkcover.jpg') ,
+	( 'Education Basket' , "Education Basket has provided academic counseling for over 1500 students, and helped them enroll in TOP universities across the globe" ,'pharma@hotmail.com', 'dokki, egypt', 4 , 'https://fastforwardsim.com/alpha/edulogo.png', 'https://fastforwardsim.com/alpha/educover.png') ,
+	( 'ZDS' , "ZDS implements creative ideas along multiple engineering services and lines of business since 2010.",'zds@yahoo.com' ,'6th of October , New Giza' , 5  , 'https://fastforwardsim.com/alpha/zdslogo.jpg', 'https://fastforwardsim.com/alpha/zdscover.jpg' ) , 
+	( 'EG BANK' , "We would like customers to think of us a partner, not just a bank - and to use our modern, smart and specially customized products with ease." ,'media@hotmail.com', 'giza', 3 , 'https://fastforwardsim.com/alpha/egbanklogo.png', 'https://fastforwardsim.com/alpha/egbankcover.png') ,
+	( 'CBC' , "CBC (Capital Broadcasting Center) is an Egyptian, general entertainment, free-to-air TV channel broadcasting from Cairo, Egypt." ,'cbc@gmail.com', 'Ramsis near the metro station', 5 , 'https://fastforwardsim.com/alpha/cbclogo.png', 'https://fastforwardsim.com/alpha/cbccover.jpg') ,
+	( 'Daily News Egypt' , "Egypt's only independent daily newspaper in English. Discuss the country's latest with the paper's reporters, editors, and other readers." ,'valeo@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/dnelogo.jpg', 'https://fastforwardsim.com/alpha/dnecover.png') ,
+	( 'IBM' , "IBM is a global technology and innovation company headquartered in Armonk, NY. It is the largest technology and consulting employer in the world" ,'IBM@gmail.com', '6th of October , smart village', 5 , 'http://logok.org/wp-content/uploads/2014/06/IBM-logo-blue.png', 'http://bluehausgroup.com/wp-content/uploads/2014/07/ibm.jpg') ,
+	( 'Valeo' , "Valeo ranks among the world's top automotive suppliers and is an independent industrial Group focused on the design" ,'valeo@gmail.com', '6th of October , smart village', 5 , 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Valeo_Logo.svg/2000px-Valeo_Logo.svg.png', 'http://www.vias-egypt-careers.com/rp_files/img/home/building.jpg') ,
+	( 'DELL EMC' , "Dell EMC enables digital transformation with trusted solutions for the modern data center." ,'dell@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/delllogo.jpg', 'http://fast	forwardsim.com/alpha/dellcover.jpg') ,
+	( 'Farah Gad Fashion designs' , "Farah Gad Fashion Designs strives to create unique, custom-made fashion, which suits every taste and every body type there is." ,'desin@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/gadlogo.jpg', 'https://fastforwardsim.com/alpha/gadcover.jpg') ,
+	( 'General Motors' , "Egypt's only independent daily newspaper in English. Discuss the country's latest with the paper's reporters, editors, and other readers." ,'valeo@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/gmlogo.jpg', 'https://fastforwardsim.com/alpha/gmcover.jpg'),
+	( 'Mo4' , "MO4 Network is a leading creative and media agency, setting the standard for digital content creation in the Middle East since 2012. Today we fuel two of the region's biggest content platforms - CairoScene.com and CairoZoom.com - and handle over 160 clients including some of the world's most powerful brands" ,'mo4@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/mo4logo.png', 'https://fastforwardsim.com/alpha/mo4cover.jpg'),
+	( 'Kantar Millward Brown' , "A global marketing research agency specializing in advertising, marketing communications, media and brand equity research. It is part of Kantar Group, the insights arm of WPP plc." ,'mo4@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/kantarlogo.png', 'https://fastforwardsim.com/alpha/kantarcover.jpg'),
+	( 'Kijamii' , "Kijamii is a Digital Tech Agency with regional existence! Originally started in Cairo in 2011. Kijamii aims at realizing social experiences for their partners. Hence building creative digital and media strategies covering all digital pillars and guaranteeing a full digital experience." ,'mo4@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/kijamiilogo.png', 'https://fastforwardsim.com/alpha/kijamiicover.jpg'),
+	( 'Ibn Hayan Labs' , "A Series of laboratories that provide top notch service using innovative solutions and bring maximum satisfaction for patients." ,'mo4@gmail.com', '6th of October , smart village', 5 , 'https://fastforwardsim.com/alpha/ibnlogo.png', 'https://fastforwardsim.com/alpha/ibncover.jpg')	,
+	( 'Fast Forward' , "best company ever",'zds@yahoo.com' ,'6th of October , New Giza' , 5  , 'https://fastforwardsim.com/alpha/ffwdlogo.png', 'https://fastforwardsim.com/alpha/zdscover.jpg' ) , 
+    ( 'Cycliste' , "Cycliste is a bike sharing program that provides users with a bike at any time.",'zds@yahoo.com' ,'6th of October , New Giza' , 5  , 'https://fastforwardsim.com/alpha/cyclistelogo.png', 'https://fastforwardsim.com/alpha/cyclistecover.jpg' ) ; 
+
+	
+CREATE TABLE field ( field_name VARCHAR(50), image_link VARCHAR(255) ,  field_id INT  AUTO_INCREMENT , PRIMARY KEY (field_id) ) ; 
+
+ALTER TABLE field AUTO_INCREMENT=1;
+
+INSERT INTO field ( field_name , image_link) 
+  VALUES ( 'Marketing' , 'http://hddfhm.com/images/medical-clipart-logo-3.png'), 
+	( 'Software Engineering' , 'http://hddfhm.com/images/medical-clipart-logo-3.png'), 
+	( 'Architecture' , 'http://hddfhm.com/images/medical-clipart-logo-3.png') ,
+	( 'Banking' , 'http://hddfhm.com/images/medical-clipart-logo-3.png'), 
+	( 'Tv Production' , 'http://hddfhm.com/images/medical-clipart-logo-3.png'), 
+	( 'Fashion design' , 'http://hddfhm.com/images/medical-clipart-logo-3.png'),
+	( 'Journalism' , 'http://hddfhm.com/images/medical-clipart-logo-3.png'), 
+	( 'Industrial' , 'http://hddfhm.com/images/medical-clipart-logo-3.png'),
+	( 'Medicine' , 'http://hddfhm.com/images/medical-clipart-logo-3.png') ; 	 
+	
+			
+
+
+CREATE TABLE simulation ( simulation_name VARCHAR(50), company_id INT ,  field_id INT ,  price INT  , description VARCHAR(8000), simulation_id INT AUTO_INCREMENT , PRIMARY KEY (simulation_id) ) ; 
+
+ALTER TABLE simulation AUTO_INCREMENT=1;
+
+INSERT INTO simulation ( simulation_name , company_id  ,  field_id , price,description ) 
+		VALUES ('Monkeys Digital Marketing' , 1 , 1  , 200 ,'In this simulation, people will get to try out our projects when it comes to DM or digital marketing through sophisticated techniques that will show the essence of the job.')  , 
+			( 'Education Basket Marketing' , 2 , 1 , 150,'In this simulation, people will get to work on different social media channels to see how important social media is in our profession.') , 
+			( 'ZDS Architectural Engineering' , 3 , 3 , 250,'In this simulation, people will try our work, by creating architecture projects and working on it, to actually see our job.') , 
+ 			( 'EG Banking' , 4 , 4 , 0,'In this simulation, people will see all aspects of banking that is not seen publicly, you will get to see the pros and cons of the job, and get involved minorly in the process\n-Req: \n-Univ Students \n-GPA:3.0+ \n-Extracurriculars. \n-Finance/Business Degree') , 
+			('GM Industrial Engineering' , 11 , 8  , 0 ,"In this simulation, you will be in our workplace, seeing General Motors' plans of operation and implementing very minor projects on the same level.")  ,
+			('GAD Fashion Design' , 10 , 6  , 350 ,'In this simulation, we will show you our profession, literally, you will be designing and implementing. ')  ,
+			('Valeo Software Engineering' , 8 , 2, 0 ,'In this simulation, you will see the potential of the different embedded systems professions in the market.')  ,
+			('IBM Software Engineering' , 7 , 2  , 300 ,'In this simulation, people will see the aspects of our newspaper, and get to work on small projects. \n-Req: \n-Highschool/Univ Students \n-GPA:3.0+ \n-Extracurriculars.')  ,
+			('DNE Journalism' , 6 , 7  , 300 ,'In this simulation, people will see the aspects of our newspaper, and get to work on small projects. \n -Req: \n-Highschool/Univ Students \n-GPA:3.0+ \n-Extracurriculars.')  ,
+			('MO4 Marketing All Inclusive' , 12 , 1  , 200 ,"Get a glimpse of our unique and disruptive holistic model in a one-day all-inclusive, extensive tour of our different departments: creative, social media management, production (photography, videography) to post-production (video editing and VFX) fashion, PR, CSR, and Graphic Design. Dive into our world, hear from our team members about their different specialisations and get hands-on experience. N.B. Not for the faint-hearted. It'll be a rollercoaster ride. You'll love it!") ,
+			('Kijamii Marketing' , 14 , 1  , 300 ,'we are glad to invite you to have a full day simulation in our place;to give you more understanding about the digital space and all its components in addition to living the Kijamii experience and culture inside the office.')  ,
+			('Millward Marketing Research' , 13 , 1  , 300 ,'In this simulation, people will get to have an overview about the process of Marketing Research, and our techniques on how we help our clients grow their brands.')  ,
+			('Ibn Hayan Geniric Labs' , 15 , 9  , 300 ,'In this simulation, people will get to have an overview about how medical labs work is done.'), 
+			('Cycliste Embedded Systems' , 17 , 2  , 300 ,'In this simulation, people will get to have an overview about how medical labs work is done.'); 
+
+
+
+CREATE TABLE simulation_date ( simulation_id INT , date DATETIME, votes INT ,  simulation_date_id INT AUTO_INCREMENT , PRIMARY KEY (simulation_date_id) ) ; 
+
+ALTER TABLE simulation_date AUTO_INCREMENT=1;
+
+INSERT INTO simulation_date ( simulation_id  , date , votes )
+ VALUES 		( 1 , '2017-10-15 02:00:00', 0 ) ,
+				( 2 , '2017-10-15 02:00:00', 0 ) ,
+				( 3 , '2018-1-15 02:00:00', 0 ) ,
+				( 4 , '2017-10-15 02:00:00', 0 ) ,
+				( 5 , '2017-10-15 02:00:00', 0 ) ,
+				( 6 , '2017-10-15 02:00:00', 0 ) ,
+				( 7 , '2017-10-15 02:00:00', 0 ) ,
+				( 8 , '2017-10-15 02:00:00', 0 ) ,
+				( 9 , '2017-10-15 02:00:00', 0 ) ,
+				( 10 , '2017-10-15 02:00:00', 0 ) ,
+				( 11 , '2017-11-15 02:00:00', 0 ) ,
+				( 12 , '2017-10-15 02:00:00', 0 ) ,
+				( 13 , '2017-10-15 02:00:00', 0 ) ,
+				( 14 , '2017-10-15 02:00:00', 0 ) ;
+
+
+
+
+
+CREATE TABLE date_voting (user_id INT , simulation_date_id INT , PRIMARY KEY ( user_id , simulation_date_id ) ) ; 
+
+ALTER TABLE date_voting AUTO_INCREMENT=1;
+
+INSERT INTO date_voting VALUES  ( 1 , 2),
+								( 2 , 2),
+								( 3 , 3 ), 
+								( 1 , 13),
+								( 2 , 12),
+								( 1 , 12); 
+			          
+
+
+CREATE TABLE user_follow_company (user_id INT , company_id INT , PRIMARY KEY ( user_id , company_id ) ) ; 
+
+ALTER TABLE user_follow_company AUTO_INCREMENT=1;
+
+INSERT INTO user_follow_company  VALUES ( 1 , 3 ),
+										( 2 , 3 ), 
+										( 3 , 3 ), 
+										( 1 , 1 ),
+										( 2 , 1 ), 
+										( 2 , 2 );  
+
+
+
+
+CREATE TABLE company_video (company_id INT, video_link VARCHAR(255) , description VARCHAR(8000),  likes INT DEFAULT 0, video_id INT AUTO_INCREMENT ,  PRIMARY KEY (video_id )  ) ; 
+
+ALTER TABLE company_video AUTO_INCREMENT=1;
+
+INSERT INTO company_video (company_id , video_link , description ,  likes ) 
+		VALUES 
+		( 44 , "https://www.youtube.com/embed/u5AT0NYxkIU", "Get YOUR Simulation NOW!" , 0 );
+
+CREATE TABLE user_like_video (user_id INT , video_id INT , PRIMARY KEY ( user_id , video_id ) ) ; 
+
+ALTER TABLE company AUTO_INCREMENT=1;
+
+INSERT INTO user_like_video VALUES  ( 1 , 1 ),
+									( 3 , 1 ),
+									( 2 , 1 ),
+									( 2 , 2 );  
+
+
+CREATE TABLE applications (user_id INT , simulation_date_id INT , status VARCHAR (30),  PRIMARY KEY ( user_id , simulation_date_id ) ) ; 
+
+ALTER TABLE company AUTO_INCREMENT=1;
+
+INSERT INTO applications VALUES ( 1 , 1 , 'pending payment' ),
+								( 2 , 1 , 'pending approval'), 
+								( 3 , 1 , 'accepted'), 
+								( 2 , 2 , 'accepted'), 
+								( 3 , 3 , 'pending approval'),
+								( 1 , 6 , 'accepted');  
+
+CREATE TABLE feedback (user_id INT , simulation_date_id INT , notes VARCHAR (255), rating INT , PRIMARY KEY ( user_id , simulation_date_id ) ) ; 
+
+CREATE TABLE Garbage ( data VARCHAR (255) , PRIMARY KEY(data )) ; 
+
+create TABLE appDetails ( appKey varchar (100) , appValue varchar (100)  ,  PRIMARY KEY (appKey)  )  ; 
+INSERT INTO appDetails VALUES  ( "version" , "1" ),
+							   ( "dead_line", "Tue Aug 15 2017 18:5:35 GMT+0200" );
+	
+create table user_promo_code (user_id INT , promo_code VARCHAR (100) , PRIMARY KEY(user_id , promo_code ) ) ; 
+
+create table company_promo_code (company_id INT , promo_code VARCHAR (100) ,price FLOAT, PRIMARY KEY(company_id , promo_code ) ) ; 
+INSERT INTO company_promo_code VALUES (1 , "theMonkey" , 0.5 ) ,   
+									  (0 , "HELLBOY" , 0 ) ;  
+
+create table promo_code_price (promo_code VARCHAR (100) , price INT , PRIMARY KEY(price , promo_code ) ) ; 
+				
+INSERT INTO promo_code_price (promo_code , price ) 
+					   VALUES ("earlybird" ,  0 ) ; 
+							 
+							 
+create table user_interests ( user_id INT , interest varchar (100) , primary key (user_id , interest)  )  		; 
+
+
+create table user_attending_expo ( user_id INT  , primary key (user_id) ) 					 
+			 

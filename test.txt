@@ -1,0 +1,85 @@
+test the add simulation 
+
+http://localhost:8080/add-simulation?company_id=1&field_id=1&simulation_name=android&price=150&date=2017-6-15 15:00:00
+
+********************-----------------*****************************
+test the login 
+
+http://localhost:8080/login?user_name=salah@gmail.com&password=123456
+
+********************------------------****************************
+test register 
+http://localhost:8080/register?user_name=mamdoh&age=19&password=34567&degree=High school&user_email=wello@gmail.com&school=naser el dean&phone_no=01133223323&promo_code=hi 
+
+********************------------------****************************
+query to get the simulations with the dates 
+
+http://localhost:8080/query?q=select * from simulation_date , simulation where simulation.simulation_id=simulation_date.simulation_id
+
+********************------------------****************************
+user info 
+
+http://localhost:8080/user_info?id=1
+
+********************------------------****************************
+drop data base tables on bluemix 
+
+drop table applications ; 
+drop table date_voting ; 
+drop table feedback ;
+drop table user_like_video ; 
+drop table company ;
+drop table company_video ; 
+drop table field ; 
+drop table simulation ; 
+drop table simulation_date; 
+drop table user ; 
+drop table user_follow_company; 
+drop table Garbage ;  
+drop table appDetails; 
+drop table promo_code_price ; 
+drop table user_promo_code ; 
+http://localhost:8080/user_info?id=1
+
+********************------------------****************************
+query to get unliked videos  
+
+
+select company_name , video_link , company_video.description , likes  from company,  company_video 
+where company.company_id = company_video.company_id and video_id not IN (
+select company_video.video_id from company,  company_video , user_like_video 
+ where company_video.video_id = user_like_video.video_id and 
+ company.company_id = company_video.company_id
+ and user_id = 1) 
+********************------------------****************************
+test the dislike  
+
+http://localhost:8080/dislike-video?user_id=3&video_id=2
+********************------------------****************************
+test the edit user 
+
+http://localhost:8080/edit-user?user_name=mamdoh33&degree=High school&user_email=wello1@gmail.com&school=naser el dean&phone_no=01134423323&user_id=1
+
+*********************-------------------------**************************
+test the apply 
+
+https://ffserver.eu-gb.mybluemix.net/apply?user_id=2&simulation_date_id=4
+
+
+****************------------------------------*************************** 
+
+test get-promo-code-discount 
+
+http://localhost:8080/get-promo-code-discount?company_id=1&promo_code=theMonkey
+
+****************------------------------------***************************
+
+test company Details 
+
+http://localhost:8080/company_details?company_id=1
+****************------------------------------***************************
+test company simulations 
+
+localhost:8080/get_company_simulations2?company_id=3&user_id=2
+
+
