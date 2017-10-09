@@ -166,7 +166,8 @@ exports.apply = function (connection , response , simulationDateID , userID){
  var toSend =  {
       "result": "pending approval" 
     } ; 
-    var qstring = "INSERT INTO applications VALUES("+userID+","+simulationDateID+",'pending approval');";  
+    var qstring = "INSERT INTO applications (user_id , simulation_date_id , status) "+
+    "VALUES("+userID+","+simulationDateID+",'pending approval');";  
     console.log("the query: "+qstring +"\n"); 
     connection.query(qstring , function (err, result) {
       if (err) {

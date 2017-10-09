@@ -22,8 +22,6 @@ var url = require ('url');
 //var sendReq  = require ('request') ;
  var sendReq = require("request");
  var unirest = require("unirest"); 
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
 
 
 /*
@@ -512,7 +510,6 @@ function insertInterests (userID , interests){
   
 
 // }
-
 app.post("/register3", function(request, response) {
 
     var UserName = request.body.user_name ; 
@@ -523,16 +520,16 @@ app.post("/register3", function(request, response) {
     var birthDate = request.body.birth_date ; 
     var phone_no = request.body.phone_no ;
     var promoCode = request.body.promo_code ; 
-    promoCode = "William is the Best"; 
+    //promoCode = "William is the Best"; 
     // if(pormoCode === "earlybird") 
-    //   promoCode = "" ; 
+    //   promoCode = "" ;
     var interests = request.body.interests ; 
     var major =  request.body.major ; 
 
     var expo  =request.body.expo  ; 
 
 
-
+    var RegisterationDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
     var toSend = {
         "result" : false , 
         "msg" : ""}
@@ -541,8 +538,8 @@ app.post("/register3", function(request, response) {
 
         //  var bd = new Date (birthDate); 
           // execute a query on our database
-               var qstring = "INSERT INTO user ( user_name, password, birth_date,major, degree ,rating,  user_email , school , phone_no  , user_image_link) VALUES('"
-                              +UserName+"','"+password +"','"+birthDate+"','"+major+"','" +degree+"', -1, '"+user_email +"','" +school+"','"+phone_no +
+               var qstring = "INSERT INTO user ( user_name, password, birth_date,major, degree ,rating,  user_email , school , phone_no,  registeration_date, user_image_link ) VALUES('"
+                              +UserName+"','"+password +"','"+birthDate+"','"+major+"','" +degree+"', -1, '"+user_email +"','" +school+"','"+phone_no +"','"+ RegisterationDate+
                               "' , 'https://www.google.com.eg/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwiLsYnUuqfVAhXGwxQKHYG3BMYQjRwIBw&url=http%3A%2F%2Fwww.fhcomplete.org%2F&psig=AFQjCNFsSLOl90IWV2MSZqgQgprT4cheJw&ust=1501175940834869');"; 
                 console.log("the query: "+qstring +"\n"); 
                 connection.query(qstring , function (err, result) {
@@ -579,7 +576,6 @@ app.post("/register3", function(request, response) {
     });
         
 });
-
 app.post("/register2", function(request, response) {
 
     var UserName = request.body.user_name ; 
@@ -592,7 +588,7 @@ app.post("/register2", function(request, response) {
     var promoCode = request.body.promo_code ; 
     var interests = request.body.interests ;
     var expo = request.body.expo ; 
-    promoCode = "William is the Best" ; 
+  //  promoCode = "William is the Best" ; 
     // if(pormoCode === "earlybird") 
     //   promoCode = "" ; 
     var birthDateYear = 2017-age ;  
@@ -601,6 +597,7 @@ app.post("/register2", function(request, response) {
 
     var bd = new Date (birthDate)
 
+    var RegisterationDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
 
     //var bd = new Date (birthDate); 
     var toSend = {
@@ -609,10 +606,10 @@ app.post("/register2", function(request, response) {
    
    
           // execute a query on our database
-               var qstring = "INSERT INTO user ( user_name, password, birth_date, degree ,rating,  user_email , school , phone_no  , user_image_link) VALUES('"
-                              +UserName+"','"+password +"','"+bd+"','" +degree+"', -1, '"+user_email +"','" +school+"','"+phone_no +
+             var qstring = "INSERT INTO user ( user_name, password, birth_date,major, degree ,rating,  user_email , school , phone_no,  registeration_date, user_image_link ) VALUES('"
+                              +UserName+"','"+password +"','"+birthDate+"','"+major+"','" +degree+"', -1, '"+user_email +"','" +school+"','"+phone_no +"','"+ RegisterationDate+
                               "' , 'https://www.google.com.eg/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwiLsYnUuqfVAhXGwxQKHYG3BMYQjRwIBw&url=http%3A%2F%2Fwww.fhcomplete.org%2F&psig=AFQjCNFsSLOl90IWV2MSZqgQgprT4cheJw&ust=1501175940834869');"; 
-                console.log("the query: "+qstring +"\n"); 
+               console.log("the query: "+qstring +"\n"); 
                 connection.query(qstring , function (err, result) {
                   if (err) {
                     console.log(err.message); 
@@ -836,7 +833,7 @@ function TransfromDate (date)
   var send ; 
     if(date.getHours()==2)
     {
-      send =getMonthName(date.getMonth() );
+      send =getMonthName("During the Month of "+date.getMonth() );
        
       console.log ("month" , send) ; 
     }
@@ -923,12 +920,12 @@ req.send({
   "merchant_order_id": RandomStringGen(20),
   "amount_cents": Price +"00",
   "currency": "EGP",
-  "simulation_date_id": SimulationDateID,
+  "items":[],
   "user_id" : UserID , 
   "shipping_data":{
-    "first_name": "test_user", 
+    "first_name": UserID, 
     "phone_number": "+201003978030", 
-    "last_name": "test_user",
+    "last_name":SimulationDateID,
     "email": "mr@g.com",
     "apartment": "803",
     "floor": "42",
@@ -1006,7 +1003,7 @@ req.end(function (res) {
 }
 */
 
-function CreatePaymentKey(data , callback){
+function CreatePaymentKey(data ,price , callback){
 
 console.log("rec data is ", data) ; 
   var unirest = require("unirest");
@@ -1027,7 +1024,7 @@ req.headers({
 
 req.type("json");
 req.send({
-  "amount_cents": "25000",
+  "amount_cents":price+"00" ,
   "currency": "EGP",
   "card_integration_id": "184",
   "order_id": data.orderId,
@@ -1247,45 +1244,124 @@ function checkExpo(userId , callback) {
 
 }
 
+
+function getSimDateIDForUser (userID , SimulationID , callback){
+
+ var qstring = "select applications.simulation_date_id , price from simulation , simulation_date ,applications " +
+                "where simulation.simulation_id = simulation_date.simulation_id and "+
+                "simulation_date.simulation_date_id = applications.simulation_date_id and " + 
+                "user_id ="+userID+" and simulation.simulation_id = " +SimulationID ; 
+                 connection.query(qstring , function (err, result) {
+                    if (err) {
+                      console.log(err);
+                       callback(err);
+                    } else {
+                      console.log(result);
+                      data = {
+                        "simulation_date_id": result[0].simulation_date_id , 
+                        "price": result[0].price 
+                      }
+                      callback(data) ; 
+                    }
+
+                  });
+}
+
+
 app.post("/test", function(request, response) {
     
-    var UserID = request.body.user_id ; 
-    var Price = request.body.price ; 
-    var simulationDateID =request.body.simulation_date_id ; 
-    AuthenticationRequest(function (recObj){
-   //   InsertGarbage("Finished the first step");
-  // console.log("UserID", UserID); 
-//console.log("Price", Price); 
-//console.log("simID", SimulationDateID); 
-      CreateOrder(recObj ,UserID ,Price , simulationDateID ,  function (dataRecieved1){
-             // InsertGarbage("data recived after the second step is"+dataRecieved1.orderId) ;
-              CreatePaymentKey (dataRecieved1 , function(dataRecieved2){
-                              //  var sendReq  = require ('request') ; 
+    var userID = request.body.user_id ; 
+    var SimID =request.body.simulation_id ; 
+    getSimDateIDForUser (userID,  SimID , function (IDAndPrice){
 
-                                // InsertGarbage("paytoc step3"+dataRecieved2.paymentToken) ; 
+        var simulationDateID = IDAndPrice.simulation_date_id ; 
+        var Price = IDAndPrice.price ; 
+      
+        AuthenticationRequest(function (recObj){
+      //   InsertGarbage("Finished the first step");
+      // console.log("UserID", UserID); 
+    //console.log("Price", Price); 
+    //console.log("simID", SimulationDateID); 
+          CreateOrder(recObj ,userID ,Price , simulationDateID ,  function (dataRecieved1){
+                // InsertGarbage("data recived after the second step is"+dataRecieved1.orderId) ;
+                  CreatePaymentKey (dataRecieved1 , Price ,  function(dataRecieved2){
+                                  //  var sendReq  = require ('request') ; 
 
-                                var toSend  = {
-                                  "url" : "https://accept.paymobsolutions.com/api/acceptance/iframes/2260?payment_token="+dataRecieved2.paymentToken
-                                }
+                                    // InsertGarbage("paytoc step3"+dataRecieved2.paymentToken) ; 
 
-                                response.send(toSend) ; 
-                                // var uri ="https://accept.paymobsolutions.com/api/acceptance/iframes/1995?payment_token="+dataRecieved2.paymentToken; 
-                                // sendReq(uri,function  (error, res, body) {
-                                //   if (error)
-                                //     console.log(error) ;
-                                //   if (!error && res.statusCode == 200) {
-                                //     console.log(body); // Print the google web page.
-                                //     response.send(body);
-                                //   }
+                                    var toSend  = {
+                                      "url" : "https://accept.paymobsolutions.com/api/acceptance/iframes/2260?payment_token="+dataRecieved2.paymentToken
+                                    }
 
-                                //   console.log(body); 
-                                // }) ; 
-                                
-              });
+                                    response.send(toSend) ; 
+                                    // var uri ="https://accept.paymobsolutions.com/api/acceptance/iframes/1995?payment_token="+dataRecieved2.paymentToken; 
+                                    // sendReq(uri,function  (error, res, body) {
+                                    //   if (error)
+                                    //     console.log(error) ;
+                                    //   if (!error && res.statusCode == 200) {
+                                    //     console.log(body); // Print the google web page.
+                                    //     response.send(body);
+                                    //   }
 
-      });
-    });
+                                    //   console.log(body); 
+                                    // }) ; 
+                                    
+                  });
+
+          });
+        });
+
+   });
+
  }) ;
+
+ app.get("/test", function(request, response) {
+    
+    var userID = 324 ; 
+    var SimID =14 ; 
+    getSimDateIDForUser (userID,  SimID , function (IDAndPrice){
+
+        var simulationDateID = IDAndPrice.simulation_date_id ; 
+        var Price = IDAndPrice.price ; 
+      
+        AuthenticationRequest(function (recObj){
+      //   InsertGarbage("Finished the first step");
+      // console.log("UserID", UserID); 
+    //console.log("Price", Price); 
+    //console.log("simID", SimulationDateID); 
+          CreateOrder(recObj ,userID ,Price , simulationDateID ,  function (dataRecieved1){
+                // InsertGarbage("data recived after the second step is"+dataRecieved1.orderId) ;
+                  CreatePaymentKey (dataRecieved1 , Price ,  function(dataRecieved2){
+                                  //  var sendReq  = require ('request') ; 
+
+                                    // InsertGarbage("paytoc step3"+dataRecieved2.paymentToken) ; 
+
+                                    var toSend  = {
+                                      "url" : "https://accept.paymobsolutions.com/api/acceptance/iframes/2260?payment_token="+dataRecieved2.paymentToken
+                                    }
+
+                                    response.send(toSend) ; 
+                                    // var uri ="https://accept.paymobsolutions.com/api/acceptance/iframes/1995?payment_token="+dataRecieved2.paymentToken; 
+                                    // sendReq(uri,function  (error, res, body) {
+                                    //   if (error)
+                                    //     console.log(error) ;
+                                    //   if (!error && res.statusCode == 200) {
+                                    //     console.log(body); // Print the google web page.
+                                    //     response.send(body);
+                                    //   }
+
+                                    //   console.log(body); 
+                                    // }) ; 
+                                    
+                  });
+
+          });
+        });
+
+   });
+
+ }) ;
+
  app.get("/test1", function(request, response) {
     
   
@@ -1330,21 +1406,63 @@ app.post("/paymob_notification_callback?hmac=9FAEDD1FF8E8B2E9B78E6BDB60C2A14A", 
     response.send(); 
  }) ;
 
- app.post("/paymob_notification_callback", function(request, response) {
-    
-    console.log("i have got a biiig response", request.body ) ; 
-    var UserID = request.body.obj.order.shipping_data.user_id ; 
-    var str = "INSERT INTO Garbage VALUES('HELLO POst "+UserID+"');"
-    connection.query(str , function (err, result) {
+
+function ConfirmPayment (userID , simulationDateID ) { 
+
+   qstr = "update applications set status = 'accepted' where user_id ="+userID+" and simulation_date_id = "+simulationDateID ; 
+    console.log(str); 
+     connection.query(str , function (err, result) {
       if (err) {
         console.log(err);
        response.status(500).send(err);
       } else {
-        console.log(result);
-      // response.send(result);
-      }
-
+          
+          response.send(result);
+          }
+           
     });
+
+}
+ app.post("/paymob_notification_callback", function(request, response) {
+    
+    //console.log("i have got a biiig response", request.body ) ; 
+    var UserID = request.body.obj.order.shipping_data.first_name; 
+
+    var price = request.body.obj.order.amount_cents; 
+
+    var simulationDateID = request.body.obj.order.shipping_data.last_name; 
+
+    var PaymentDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
+
+    var qstring = "update applications set status = 'accepted' , payment_date = '"+PaymentDate+"' where user_id = "+UserID +
+    " and simulation_date_id=" + simulationDateID ;  
+
+    InsertGarbage (qstring);  
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+          
+          response.send(result);
+          }
+           
+    });
+  //  InsertGarbage("Hello Post id "+ UserID) ; 
+  //  InsertGarbage ("Hello Post price "+ price) ; 
+  // InsertGarbage ("Hello Post form simID "+ simulationDateID) ; 
+
+    // var str = "INSERT INTO Garbage VALUES('HELLO POst "+UserID+"');"
+    // connection.query(str , function (err, result) {
+    //   if (err) {
+    //     console.log(err);
+    //    response.status(500).send(err);
+    //   } else {
+    //     console.log(result);
+    //   // response.send(result);
+    //   }
+
+    // });
     response.send(); 
  }) ;
 
@@ -1362,110 +1480,30 @@ app.get("/paymob_txn_response_callback", function(request, response) {
       }
 
     });
-    response.send(); 
+    var price = request.query.amount_cents ; 
+    var responseMsg = "you have Successfully payed "+price+" EGP to FastForward\nEnjoy Your Simulation" ; 
+    response.send(responseMsg); 
  }) ;
 
 
-function getUserPassword (userEmail , callback){
 
-    var qstring = "select password from user where user_email ='"+userEmail+"'"; 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-        callback(result) ; 
-      }
-
-    });
-
-}
-function SendAnEmail (email , password){
-
-
-var transporter = nodemailer.createTransport(smtpTransport({
-                                  service: 'Hotmail',
-                                  auth: {
-                                    user: 'fastforwardsim@outlook.com', // Your email id
-                                    pass: 'Fastforward$$' // Your password
-                                  }
-                                }));
-
-                                var mailOptions = {
-                                  from: 'fastforwardsim@outlook.com', // sender address
-                                  to: email, // list of receivers
-                                  subject: 'Change Password', // Subject line
-                                  //text: text //, // plaintext body
-                                  html: "Your password is "+password// You can choose to send an HTML body instead
-                                };
-                                transporter.sendMail(mailOptions, function(error, info){
-                                  if(error){
-                                    //globalCTRL.addErrorLog(error);
-                                   // res.send(error.message);
-                                   console.log("email sending problem"+ error.message); 
-                                  }else{
-                                    console.log(123);
-                                    //res.send({'ok':info.response});
-                                  };
-                                });
-}
 
 app.get("/forgot-password", function(request, response) {
 
     var UserEmail = request.query.user_email ; 
-    var toSend = {
-      "result" : false  , 
-      "msg" : "" 
-    } ; 
-    // execute a query on our database
-    getUserPassword(UserEmail ,  function (result) {
+
+    var Login = require("./page_modules/loginServer") ; 
+    Login.ForgotPassword(connection, response , UserEmail) ; 
     
-        console.log(result) ; 
-        if (result.length === 0)
-        {
-        toSend.msg = "You Are Not Registered, Please Register" ; 
-         response.send(toSend); 
-
-        }
-        else {
-          SendAnEmail(UserEmail , result[0].password) ; 
-          toSend.result= true ;
-          toSend.msg  = "An Email Has Been Sent To You With your Password Check It Out!" ;
-          response.send (toSend);  
-        }
-      
-
-    });
+   
 });
 app.get("/like-video", function(request, response) {
     
     var videoID = request.query.video_id ;
     var userID = request.query.user_id;  
 
-    var qstring = "INSERT INTO user_like_video VALUES("+userID+","+videoID+");";  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-        var qstring = "UPDATE company_video SET likes = likes+1 where video_id="+videoID+";" ;   
-        connection.query(qstring , function (err, result2) {
-              if (err) {
-                console.log(err);
-              response.status(500).send(err);
-              } else {
-
-            
-                response.send(result) ; 
-              }
-
-            });
-      }
-
-    });
+   var videoServer = require("./page_modules/videoServer") ; 
+    videoServer.LikeVideo(connection, response , userID , videoID) ; 
    
 });
 
@@ -1496,30 +1534,9 @@ app.get("/dislike-video", function(request, response) {
     var videoID = request.query.video_id ;
     var userID = request.query.user_id;  
 
-     var qstring ="DELETE FROM user_like_video where "+
-                 "user_id ="+userID+" and video_id = " +videoID+ ";" ; 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
 
-        var qstring = "UPDATE company_video SET likes = likes-1 where video_id="+videoID+";" ;   
-        connection.query(qstring , function (err, result2) {
-              if (err) {
-                console.log(err);
-              response.status(500).send(err);
-              } else {
-
-            
-                response.send(result) ; 
-              }
-
-            });
-      }
-
-    });
+      var videoServer = require("./page_modules/videoServer") ; 
+    videoServer.DisLikeVideo(connection, response , userID , videoID) ; 
    
 });
 app.get("/user-liked-videos", function(request, response) {
@@ -1593,19 +1610,8 @@ app.get("/follow-company", function(request, response) {
     var companyID = request.query.company_id ;
     var userID = request.query.user_id;  
 
-    var qstring = "INSERT INTO user_follow_company VALUES("+userID+","+companyID+");";  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-        response.send(result); 
-      }
-
-    });
-   
+     var GHF = require("./page_modules/GlobalHelperFunctions") ; 
+    GHF.FollowCompany(connection, response , userID ,companyID) ; 
 });
 
 app.get("/get-date-votes", function(request, response) {
@@ -1708,18 +1714,8 @@ app.get("/unfollow-company", function(request, response) {
     var companyID = request.query.company_id ;
     var userID = request.query.user_id;  
 
-    var qstring ="DELETE FROM user_follow_company where "+
-                 "user_id ="+userID+" and company_id = " +companyID+ ";" ;   
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-        response.send(result); 
-      }
-    });
+     var GHF = require("./page_modules/GlobalHelperFunctions") ; 
+    GHF.UnFollowCompany(connection, response , userID ,companyID) ; 
    
 });
 
@@ -1759,83 +1755,14 @@ app.get("/queryList", function(request, response) {
   
 });
 
-function checkUserFollowLikeCompany( Videos , index , UserID   , callback ){
-    var CompanyID  = Videos[index].company_id ; 
-    var VideoID = Videos[index].video_id ;  
-    var qstring = "select * from user_follow_company where "+
-                  "user_id = " +UserID+ " and company_id = "+CompanyID+ ";" ;  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
 
-        var qstring = "select * from user_like_video where "+
-                  "user_id = " +UserID+ " and video_id = "+VideoID+ ";" ;  
-           console.log("the query: "+qstring +"\n"); 
-          connection.query(qstring , function (err, result2) {
-              if (err) {
-                console.log(err);
-              response.status(500).send(err);
-              } else {
-                if (result2.length>0)
-                  Videos[index]["liked"] = true ;  
-                else 
-                  Videos[index]["liked"] = false ; 
-
-                   if (result.length>0)
-                      Videos[index]["followed"] = true ; 
-                    else 
-                      Videos[index]["followed"] = false ; 
-
-                      callback(Videos); 
-              
-              }
-
-            });
-
-
-
-       
-      
-      }
-
-    });
-}
 app.get("/allVideos", function(request, response) {
 
     var UserID = request.query.user_id ;  
  
-    // execute a query on our database
-    var qstring = "select company_video.video_id, company.company_id, company_name , "+ 
-                  "video_link , company_video.description , likes , profile_pic_link"+ 
-                  " from company_video , company where company.company_id = company_video.company_id ;" ;  
-    console.log("the query: "+qstring +"\n"); 
+    var videoServer  = require("./page_modules/videoServer") ; 
 
-   // var sync = Futures.sequence;
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          var counter = 0 ; 
-         for (i = 0 ; i < result.length ; i++){
-            checkUserFollowLikeCompany(result , i , UserID , function (resultWithfollow){
-              result = resultWithfollow ; 
-              counter += 1  ; 
-              if(counter=== result.length){
-                 console.log(result);
-                 response.send (result);  
-               }
-            });          
-             
-      
-         }
-        
-      }
-
-    });
+    videoServer.GetAllVideos(connection , response,UserID ) ;    
 });
 app.get("/company_details", function(request, response) {
 

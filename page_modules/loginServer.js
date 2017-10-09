@@ -30,3 +30,48 @@ exports.Login  = function (connection , response , UserEmail ,password) {
 
     });
 }
+
+exports.ForgotPassword  = function (connection , response , UserEmail ) { 
+ var toSend = {
+      "result" : false  , 
+      "msg" : "" 
+    } ; 
+    // execute a query on our database
+    getUserPassword( connection , response , UserEmail ,  function (result) {
+    
+        console.log(result) ; 
+        if (result.length === 0)
+        {
+        toSend.msg = "You Are Not Registered, Please Register" ; 
+         response.send(toSend); 
+
+        }
+        else {
+          GHF = require("./GlobalHelperFunctions") ; 
+          console.log("going to send the email") ;
+          GHF.SendAnEmail(UserEmail , result[0].password) ; 
+          toSend.result= true ;
+          toSend.msg  = "An Email Has Been Sent To You With your Password Check It Out!" ;
+          response.send (toSend);  
+        }
+      
+
+    });
+}
+
+function getUserPassword (connection , response , userEmail , callback){
+
+    var qstring = "select password from user where user_email ='"+userEmail+"'"; 
+    console.log("the query: "+qstring +"\n"); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        callback(result) ; 
+      }
+
+    });
+
+}
+
