@@ -58,7 +58,7 @@ exports.TransfromDate= function  (date)
 }
 
 
-exports.SendAnEmail= function  (email , password ){
+exports.SendAnEmail= function  (email , emailsubject , content ){
 
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport'); 
@@ -73,9 +73,9 @@ var transporter = nodemailer.createTransport(smtpTransport({
                                 var mailOptions = {
                                   from: 'fastforwardsim@outlook.com', // sender address
                                   to: email, // list of receivers
-                                  subject: 'Change Password', // Subject line
+                                  subject: emailsubject, // Subject line
                                   //text: text //, // plaintext body
-                                  html: "Your password is "+password// You can choose to send an HTML body instead
+                                  html: content// You can choose to send an HTML body instead
                                 };
                                 transporter.sendMail(mailOptions, function(error, info){
                                   if(error){

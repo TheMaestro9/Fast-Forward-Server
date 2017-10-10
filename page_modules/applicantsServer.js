@@ -15,8 +15,13 @@
       } else {
           for(i = 0 ; i < result.length ; i++)
           {
-            if (result[i].status==="accepted")
+            if (result[i].status==="accepted"){
               toSend.accepted.push(result[i])
+              GHF = require("./GlobalHelperFunctions") ; 
+              console.log("going to send acceptance email") ;
+          //    GHF.SendAnEmail(UserEmail ,'Acceptance Notification',"Congratulation you got accepted") ; 
+            }
+              
             else
               toSend.applied.push(result[i])
 

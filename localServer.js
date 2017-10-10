@@ -43,8 +43,8 @@ var mysql = require('mysql');////////////////////
 var connection = mysql.createConnection({
   host: "127.0.0.1", 
   port: "3306", 
-  user: "Walid Moussa", 
-  password: "wal2191995",
+  user: "root", 
+  password: "Nadine-94",
   database: "FFDB"
 });
 
@@ -2220,20 +2220,11 @@ app.get("/dateso", function(request, response) {
 
     // execute a query on our database
     //var q = request.query.q ; 
-  
+    console.log("IN GETTTTTTTTTTTTTTTTTTTTTT")
+    var loginServer = require ("./page_modules/loginServer") ; 
+    loginServer.ForgotPassword(connection,response,"nadinetarek19@gmail.com")
 
-    qstring = "select * from simulation_date"; 
-    console.log(qstring); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-        console.log(result);
-       response.send(result);
-      }
 
-    });
 });
 
 // Now we go and listen for a connectionection.

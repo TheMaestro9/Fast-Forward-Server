@@ -36,10 +36,11 @@ exports.ForgotPassword  = function (connection , response , UserEmail ) {
       "result" : false  , 
       "msg" : "" 
     } ; 
+    console.log("INNNNNNNNN") ; 
     // execute a query on our database
     getUserPassword( connection , response , UserEmail ,  function (result) {
     
-        console.log(result) ; 
+        console.log("HEreeeeee",result) ; 
         if (result.length === 0)
         {
         toSend.msg = "You Are Not Registered, Please Register" ; 
@@ -49,7 +50,7 @@ exports.ForgotPassword  = function (connection , response , UserEmail ) {
         else {
           GHF = require("./GlobalHelperFunctions") ; 
           console.log("going to send the email") ;
-          GHF.SendAnEmail(UserEmail , result[0].password) ; 
+          GHF.SendAnEmail(UserEmail ,'Change Password',"Your password is "+result[0].password) ; 
           toSend.result= true ;
           toSend.msg  = "An Email Has Been Sent To You With your Password Check It Out!" ;
           response.send (toSend);  
