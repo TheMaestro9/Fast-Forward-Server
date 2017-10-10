@@ -833,7 +833,7 @@ function TransfromDate (date)
   var send ; 
     if(date.getHours()==2)
     {
-      send =getMonthName("During the Month of "+date.getMonth() );
+      send ="During the Month of "+getMonthName(+date.getMonth() );
        
       console.log ("month" , send) ; 
     }
