@@ -22,6 +22,7 @@ var url = require ('url');
 //var sendReq  = require ('request') ;
  var sendReq = require("request");
  var unirest = require("unirest"); 
+var fs =require('fs'); 
 
 
 /*
@@ -1469,20 +1470,29 @@ function ConfirmPayment (userID , simulationDateID ) {
 app.get("/paymob_txn_response_callback", function(request, response) {
     
   //  console.log("i have got a biiig response", request.body ) ; 
-    var str = "INSERT INTO Garbage VALUES('HELLO Get');"
-    connection.query(str , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-        console.log(result);
-      // response.send(result);
-      }
+    // var str = "INSERT INTO Garbage VALUES('HELLO Get');"
+    // connection.query(str , function (err, result) {
+    //   if (err) {
+    //     console.log(err);
+    //    response.status(500).send(err);
+    //   } else {
+    //     console.log(result);
+    //   // response.send(result);
+    //   }
 
-    });
-    var price = request.query.amount_cents ; 
-    var responseMsg = "you have Successfully payed "+price+" EGP to FastForward\nEnjoy Your Simulation" ; 
-    response.send(responseMsg); 
+    // });
+
+    fs.readFile('TransactionMSG.html', 'utf8', function(err, data) {  
+    if (err) throw err;
+    console.log(data);
+  // var parts =  data.split(',') ; 
+  // price = 10 ; 
+  // parts[0]= parts[0] + price  ; 
+   //var out = parts[0] + parts[1] ; 
+      response.send(data) ; 
+
+});
+    //response.send(responseMsg); 
  }) ;
 
 
