@@ -31,3 +31,48 @@
            
     });
  }
+
+
+  exports.AcceptApplicant  = function (connection , response , price , userID , simDateId ) { 
+
+    var stat = ""  ; 
+    if (price === 0)
+      stat = "accepted" ; 
+    else
+      stat = "pending payment"; 
+
+      str = "update applications set status = '"+stat+"' where user_id ="+userID+" and simulation_date_id = "+simDateId ; 
+    console.log(str); 
+     connection.query(str , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+          
+          response.send(result);
+          }
+           
+    });
+    
+  }
+
+
+
+  exports.RejectApplicant  = function (connection , response  , userID , simDateId ) { 
+
+      var stat = "rejected"  ; 
+      
+      str = "update applications set status = '"+stat+"' where user_id ="+userID+" and simulation_date_id = "+simDateId ; 
+       console.log(str); 
+       connection.query(str , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+          
+          response.send(result);
+          }
+           
+     });
+    
+  }

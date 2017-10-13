@@ -252,25 +252,9 @@ app.post("/accept-applicant", function(request, response) {
     var simDateId =  request.body.simulation_date_id ; 
 
 
-    var stat = ""  ; 
-    if (price === 0)
-      stat = "accepted" ; 
-    else
-      stat = "pending payment"; 
+    var applicantsServer = require ("./page_modules/applicantsServer") 
+    applicantsServer.AcceptApplicant(connection , response ,price , userID , simDateId); 
 
-      str = "update applications set status = '"+stat+"' where user_id ="+userID+" and simulation_date_id = "+simDateId ; 
-    console.log(str); 
-     connection.query(str , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          
-          response.send(result);
-          }
-           
-    });
-    
 });
 
 
@@ -280,21 +264,8 @@ app.post("/reject-applicant", function(request, response) {
     var userID =   request.body.user_id ; 
     var simDateId =  request.body.simulation_date_id ; 
 
-
-    var stat = "rejected"  ; 
-      
-      str = "update applications set status = '"+stat+"' where user_id ="+userID+" and simulation_date_id = "+simDateId ; 
-    console.log(str); 
-     connection.query(str , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          
-          response.send(result);
-          }
-           
-    });
+    var applicantsServer = require ("./page_modules/applicantsServer") 
+    applicantsServer.RejectApplicant(connection , response , userID , simDateId); 
     
 });
 app.get("/update-dead-line", function(request, response) {
@@ -527,7 +498,7 @@ app.post("/register3", function(request, response) {
     var interests = request.body.interests ; 
     var major =  request.body.major ; 
 
-    var expo  =request.body.expo  ; 
+    //var expo  =request.body.expo  ; 
 
 
     var RegisterationDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
