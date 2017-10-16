@@ -319,7 +319,7 @@ app.post("/edit-user", function(request, response) {
     var phone_no = request.body.phone_no ;
 
       var profileServer = require ("./page_modules/profileServer") 
-    profileServer.EditUser(connection , response , UserName 
+      profileServer.EditUser(connection , response , userName 
     , degree ,user_email , school , phone_no , userID  ); 
    
 });
