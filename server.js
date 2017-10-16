@@ -1958,41 +1958,18 @@ app.get ("/user_delete_simulation" ,  function(request, response) {
 
 });
 
-app.get ("/add-simulation" ,  function(request, response) {
+app.post ("/add-simulation" ,  function(request, response) {
     
-    var companyID = request.query.company_id ;
-    var fieldID  = request.query.field_id ;
-    var name = request.query.simulation_name ;
-    var price = request.query.price ;
-    var date = request.query.date ; 
+    var companyID = request.body.company_id ;
+    var fieldID  = request.body.field_id ;
+    var name = request.body.simulation_name ;
+    var price = request.body.price ;
+   // var date = request.body.date ; 
+    var description = request.body.description ; 
 
-
-    checkSimExist(companyID, fieldID, name , price , function (simID) {
-        if (simID.length != 0 )
-          {
-            insertSimDate ( date , simID[0].simulation_id);
-          } 
-        else 
-        {
-           var qstring = "INSERT INTO simulation ( simulation_name , company_id  ,  field_id , price )" + 
-                  "VALUES ( '"+name+"'," +companyID+ ","+ fieldID+" , "+ price+ ");" ;   
-            console.log("the query: "+qstring +"\n"); 
-            connection.query(qstring , function (err, result) {
-              if (err) {
-                console.log(err);
-              response.status(500).send(err);
-              } else {
-                //response.send(result) ; 
-              }
-
-           });
-
-              checkSimExist(companyID, fieldID, name , price , function (simID) {
-              insertSimDate ( date , simID[0].simulation_id);
-          }); 
-        }
-    });
-   response.send("done"); 
+     var addSimulationServer = require ("./page_modules/addSimulationServer") 
+    addSimulationServer.AddSimulation(connection , response , companyID , fieldID
+                                      ,name , price , description); 
 });
 
 
