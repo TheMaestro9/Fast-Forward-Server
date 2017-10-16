@@ -1887,65 +1887,16 @@ app.get("/get_company_simulations2", function(request, response) {
    
 });
 
-function checkSimExist (companyID, fieldID , name ,price , callback) 
-{
-     var qstring ="select simulation_id from simulation where "+
-                 "company_id ="+companyID+" and field_id = " +fieldID+ " and simulation_name = '"+ name+"' and price= "+ price+ ";" ; 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       //response.status(500).send(err);
-      } else {
-       callback(result) ; 
-      }
+app.post("/add-simulation-date", function(request, response) {
+    
+    var date = request.body.date ;
+    var simID = request.body.simulation_id ;
+   
+   var addSimulationDateServer = require ("./page_modules/addSimulationDateServer") 
+    addSimulationDateServer.AddSimulationDate(connection, response , date , simID);  
+  
+});
 
-    });
-} 
-
-function insertSimDate ( date , simID ){
-    // first check that the date doesn't exist before. 
-    checkSimDateExist (date , simID , function (simDateID){
-        if (simDateID.length=== 0 ) // if it don't exist insert it 
-        {
-              var qstring = "INSERT INTO simulation_date ( simulation_id  , date , votes )" + 
-                              "VALUES (" +simID+ " , '"+date+"', 0);" ;   
-              console.log("the query: "+qstring +"\n"); 
-              connection.query(qstring , function (err, result) {
-                if (err) {
-                  console.log(err);
-                //response.status(500).send(err);
-              }
-              else 
-                console.log("date inserted successfully"); 
-              });                 
-            
-        }
-
-      else {
-
-        console.log("date already exist")
-      }
-    }); 
-     
-}
-
-function checkSimDateExist ( date , simID , callback){
-
-var qstring ="select simulation_date_id from simulation_date where "+
-                 "simulation_id ="+simID+" and date = '"+date+"';" ; 
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       //response.status(500).send(err);
-      } else {
-       callback(result) ; 
-      }
-
-    });
-
-}
 
 app.get ("/user_delete_simulation" ,  function(request, response) {
 
