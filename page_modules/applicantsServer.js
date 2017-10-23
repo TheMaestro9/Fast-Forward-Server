@@ -40,7 +40,7 @@
    console.log("price",price)
    console.log("date id",simDateId)
     if (price === 0){
-      stat = "accepted" ; 
+      stat = "pending payment" ; 
       email = "select user_email from user where user_id ="+userID; 
        connection.query(email , function (err, result) {
         if (err) {
@@ -54,7 +54,8 @@
              response.status(500).send(err);
             } else {
               GHF = require("./GlobalHelperFunctions") ; 
-              GHF.SendAnEmail(result[0].user_email ,'Acceptance Notification',"Congratulations, you got accepted in the "+res[0].simulation_name+" simulation.") ; 
+               GHF.SendAnEmail(result[0].user_email ,'Acceptance Notification',"Congratulations, you got accepted in the "+res[0].simulation_name+" simulation."+
+              "You should now pay a reservation fee to be refunded at the begining of the simulation. You can check the payment methods in the mobile App now.") ; 
             }})
           
           // response.send(result);
@@ -87,7 +88,10 @@
     }
       
 
-      str = "update applications set status = '"+stat+"' where user_id ="+userID+" and simulation_date_id = "+simDateId ; 
+     var AcceptanceDate = new Date ().toISOString().replace("T"," ").replace("Z","") ;
+   //  AcceptanceDate.setHours(AcceptanceDate.getHours() + 2)  ; 
+    // AcceptanceDate = AcceptanceDate.toISOString().replace("T"," ").replace("Z","") ;
+      str = "update applications set status = '"+stat+"' , payment_date='"+ AcceptanceDate +"'  where user_id ="+userID+" and simulation_date_id = "+simDateId ; 
     console.log(str); 
      connection.query(str , function (err, result) {
       if (err) {

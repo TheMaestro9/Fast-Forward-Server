@@ -1841,9 +1841,10 @@ var  qstring =  "select count(*) as count  from simulation , simulation_date , a
 }
 function getSimDetails (simulations , index , userID,   callback ){
       var SimID = simulations[index].simulation_id ; 
+     var currentDate = new Date ().toISOString().replace("T"," ").replace("Z","") 
       // get dates 
-    var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" +SimID +";" ;  
-    console.log("the query: "+qstring +"\n"); 
+    var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" +SimID +" and date > '"+currentDate +"';" ;  
+     console.log("the query: "+qstring +"\n"); 
     connection.query(qstring , function (err, result) {
       if (err) {
       // response.status(500).send(err);

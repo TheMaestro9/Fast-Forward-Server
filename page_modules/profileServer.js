@@ -15,7 +15,7 @@ exports.GetUserInfo  = function (connection , response  , userID) {
 
 exports.GetUserSimulations  = function (connection , response  , userID) { 
 
-qstring = " select simulation_date.simulation_date_id, company_name, profile_pic_link,simulation_name , date , status , price from company, simulation , simulation_date , applications"+
+qstring = " select simulation_date.simulation_date_id, company_name, profile_pic_link,simulation_name , date , status , price ,payment_date from company, simulation , simulation_date , applications"+
               " where user_id="+ userID + 
               " and simulation_date.simulation_id = simulation.simulation_id and company.company_id = simulation.company_id "+
               " and applications.simulation_date_id = simulation_date.simulation_date_id;" ; 
@@ -27,9 +27,14 @@ qstring = " select simulation_date.simulation_date_id, company_name, profile_pic
       } else {
           for ( i = 0 ; i < result.length ; i++){
 
-             var GHF = require("./GlobalHelperFunctions") ; 
-            
+             var GHF = require("./GlobalHelperFunctions") ;
              result[i].date = GHF.TransfromDate( result[i].date)  ;
+             if ( result[i].status == "pending payment"){
+                var AcceptanceDeadline = new Date( result[i].payment_date) ; 
+                AcceptanceDeadline .setDate( AcceptanceDeadline.getDate() + 1 ) ; 
+                // AcceptanceDeadline .setHours( AcceptanceDeadline.getHours() + 2 ) ; 
+                result[i]["acceptance_deadline"] = AcceptanceDeadline ; 
+             }
           }
           
           response.send(result) ;

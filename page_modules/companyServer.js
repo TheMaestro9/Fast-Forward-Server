@@ -76,8 +76,9 @@ exports.GetCompanySimulations  = function (connection , response , companyID , u
 
 function getSimDetails (connection , simulations , index , userID,   callback ){
     var SimID = simulations[index].simulation_id ; 
+    var currentDate = new Date ().toISOString().replace("T"," ").replace("Z","") 
       // get dates 
-    var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" +SimID +";" ;  
+    var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" +SimID +" and date > '"+currentDate +"';" ;  
     console.log("the query: "+qstring +"\n"); 
     connection.query(qstring , function (err, result) {
       if (err) {
@@ -135,10 +136,20 @@ var  qstring =  "select count(*) as count  from simulation , simulation_date , a
     });
   
 }
+function DeleteApplication (connection , userID , simulationID) {
+var qstring = "delete from applications where user_id="+userID+ " and simulation_date_id="+simulationID;
+  connection.query(qstring , function (err, result) {
+  if (err) {
+    console.log(err.message); 
+  } else {
+  console.log("deleted successfully");
+  }
+  });
 
+}
 function getSimulationStatus (connection , simulations , index, simID , userID ,callback){
 
-  var  qstring =  "select status as status  from simulation , simulation_date , applications "+
+  var  qstring =  "select status as status , payment_date from simulation , simulation_date , applications "+
                 "where simulation.simulation_id = simulation_date.simulation_id and "+  
                 "simulation_date.simulation_date_id = applications.simulation_date_id "+
                 "and simulation.simulation_id ="+ simID+" and user_id="+userID ; 
@@ -149,12 +160,27 @@ function getSimulationStatus (connection , simulations , index, simID , userID ,
       // response.status(500).send(err);
         console.log("error in get num of applicants") ; 
       } else { 
+
         if(result.length > 1 )
           simulations[index]["status"] ="Veiw Status";  
-        else if (result.length === 1 )
-          simulations[index]["status"] =result[0].status;  
-        else 
+        else if (result.length === 1 ){
+            var currentDate = new Date () ; 
+            var AcceptanceDeadline = new Date( result[0].payment_date) ; 
+           AcceptanceDeadline .setDate( AcceptanceDeadline.getDate() + 1 ) ; 
+            var status = result[0].status;
+            if(currentDate > AcceptanceDeadline){
+              status = ""
+              DeleteApplication(connection , userID , simID) ; 
+            }
+            // AcceptanceDeadline .setHours( AcceptanceDeadline.getHours() + 2 ) ; 
+            simulations[index]["status"] = status ; 
+            simulations[index]["acceptance_deadline"]= AcceptanceDeadline ; 
+        }
+
+        else {
           simulations[index]["status"] ="";  
+           simulations[index]["Acceptance_deadline"]= "" ;
+        }
 
         callback(simulations) ; 
       }
