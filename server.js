@@ -1898,6 +1898,30 @@ app.post("/add-simulation-date", function(request, response) {
   
 });
 
+app.post("/delete-simulation", function(request, response) {
+    
+    var simID = request.body.simulation_id ;
+   
+   var addSimulationServer = require ("./page_modules/addSimulationServer") 
+    addSimulationServer.DeleteSimulation(connection, response , simID);  
+  
+});
+
+
+app.post("/edit-company", function(request, response) {
+    
+    var companyID = request.body.company_id ;
+    var Name = request.body.company_name ;
+    var Description = request.body.description ;
+
+   
+   var editCompanyServer = require ("./page_modules/editCompanyServer") 
+    editCompanyServer.EditCompany(connection, response , companyID , Name , Description);  
+  
+});
+
+
+
 
 app.get ("/user_delete_simulation" ,  function(request, response) {
 
@@ -1919,8 +1943,8 @@ app.post ("/add-simulation" ,  function(request, response) {
    // var date = request.body.date ; 
     var description = request.body.description ; 
 
-     var addSimulationServer = require ("./page_modules/addSimulationServer") 
-    addSimulationServer.AddSimulation(connection , response , companyID , fieldID
+     var addSimulationDetailsServer = require ("./page_modules/addSimulationDetailsServer") 
+    addSimulationDetailsServer.AddSimulation(connection , response , companyID , fieldID
                                       ,name , price , description); 
 });
 
