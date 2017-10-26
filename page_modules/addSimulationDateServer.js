@@ -1,4 +1,4 @@
-exports.AddSimulationDate  = function (connection,  response , date , simID ){
+exports.AddSimulationDate  = function (connection,  response , date , simID , duration ){
     // first check that the date doesn't exist before. 
     var toSend = { 
     "result": true , 
@@ -7,8 +7,8 @@ exports.AddSimulationDate  = function (connection,  response , date , simID ){
     checkSimDateExist (connection , date , simID , function (simDateID){
         if (simDateID.length=== 0 ) // if it don't exist insert it 
         {
-              var qstring = "INSERT INTO simulation_date ( simulation_id  , date , votes )" + 
-                              "VALUES (" +simID+ " , '"+date+"', 0);" ;   
+              var qstring = "INSERT INTO simulation_date ( simulation_id  , date , votes , duration )" + 
+                              "VALUES (" +simID+ " , '"+date+"', 0 , "+ duration +" );" ;   
               console.log("the query: "+qstring +"\n"); 
               connection.query(qstring , function (err, result) {
                 if (err) {
