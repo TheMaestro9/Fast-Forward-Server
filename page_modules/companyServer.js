@@ -168,7 +168,7 @@ function getSimulationStatus (connection , simulations , index, simID , userID ,
             var AcceptanceDeadline = new Date( result[0].payment_date) ; 
            AcceptanceDeadline .setDate( AcceptanceDeadline.getDate() + 1 ) ; 
             var status = result[0].status;
-            if(currentDate > AcceptanceDeadline){
+            if(currentDate > AcceptanceDeadline & status == 'pending payment'){
               status = ""
               DeleteApplication(connection , userID , simID) ; 
             }

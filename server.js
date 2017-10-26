@@ -1768,7 +1768,10 @@ app.get("/get-field-simulation", function(request, response) {
     
     var userID = request.query.user_id ; 
     var fieldID = request.query.field_id ;
-    var qstring = "select * from simulation where field_id=" +fieldID+ ";";
+
+   var currentDate = new Date ().toISOString().replace("T"," ").replace("Z","") ;
+    var qstring = " select distinct simulation.simulation_id , price , simulation_name , company_id, description from simulation , simulation_date where  field_id=" +fieldID+ 
+                  " and simulation.simulation_id = simulation_date.simulation_id and date > '"+ currentDate + "';";
                  
     console.log("the query: "+qstring +"\n"); 
     connection.query(qstring , function (err, result) {
@@ -1892,9 +1895,10 @@ app.post("/add-simulation-date", function(request, response) {
     
     var date = request.body.date ;
     var simID = request.body.simulation_id ;
-   
+    var duration = request.body.duration ; 
+
    var addSimulationDateServer = require ("./page_modules/addSimulationDateServer") 
-    addSimulationDateServer.AddSimulationDate(connection, response , date , simID);  
+    addSimulationDateServer.AddSimulationDate(connection, response , date , simID , duration);  
   
 });
 
