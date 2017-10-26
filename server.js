@@ -2059,6 +2059,32 @@ app.get("/request-new-time", function(request, response) {
   });
     
 });
+app.get("/get-applicants-details", function(request, response) {
+
+    // execute a query on our database
+      var date = request.query.date ; 
+      var name = request.query.simulation_name ; 
+     
+    qstring = "select user_email , user_name , user.user_id , phone_no , status  from "  + 
+              "user , applications , simulation , simulation_date where applications.user_id = user.user_id and " + 
+              "simulation.simulation_id = simulation_date.simulation_id and "+
+              "applications.simulation_date_id = simulation_date.simulation_date_id and "+ 
+              "simulation_name ="+name+" and date ="+date+" ; "  
+
+
+    
+    console.log(qstring); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        console.log(result);
+       response.send(result);
+      }
+
+    });
+});
 
 app.get("/dateso", function(request, response) {
 
