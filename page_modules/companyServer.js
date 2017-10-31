@@ -18,7 +18,7 @@ exports.GetPromoCodeDiscount = function (connection, response  , promoCode, comp
 
 }
 
-exports.GetCompanyDetails = function (connection ,response ,companyID ,UserID  ) {
+exports.GetCompanyDetails = function (connection ,response ,companyID  ) {
 console.log("IN ")
     var toSend = {} ; 
     // execute a query on our database
@@ -38,11 +38,10 @@ console.log("IN ")
                     console.log(result2[0]["COUNT(*)"]); 
                     toSend["followers"] =result2[0]["COUNT(*)"] ; 
                     toSend = Object.assign (result[0] , toSend); 
-                    checkUserFollowCompany( connection , toSend , response , companyID  , UserID   , function(val){
-                      response.send (val);  
-                    })
-                   
+                    
+                    response.send(toSend)
                 }
+                
 
             });
       }
@@ -210,7 +209,8 @@ exports.apply = function (connection , response , simulationDateID , userID){
     });
 }
 
-function checkUserFollowCompany( connection , Company , response , CompanyID  , UserID   , callback ){
+exports.checkUserFollowCompany=function ( connection , response , CompanyID  , UserID ){
+  var toSend={};
   var qstring = "select * from user_follow_company where "+
                 "user_id = " +UserID+ " and company_id = "+CompanyID+ ";" ;  
   console.log("the query: "+qstring +"\n"); 
@@ -223,12 +223,12 @@ function checkUserFollowCompany( connection , Company , response , CompanyID  , 
   console.log("result",result.length);
 
                  if (result.length>0)
-                    Company["followed"] = true ; 
+                   toSend["followed"] = true ; 
                   else 
-                    Company["followed"] = false ; 
-                    console.log("result",Company["followed"]);
-                    callback(Company); 
-            
+                    toSend["followed"] = false ; 
+                    console.log("result",toSend["followed"]);
+                     
+            response.send(toSend);
             }
 
           
