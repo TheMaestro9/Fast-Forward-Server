@@ -15,7 +15,7 @@ exports.GetUserInfo  = function (connection , response  , userID) {
 
 exports.GetUserSimulations  = function (connection , response  , userID) { 
 
-qstring = " select simulation_date.simulation_date_id, company_name, profile_pic_link,simulation_name , date , status , price ,payment_date from company, simulation , simulation_date , applications"+
+qstring = " select simulation_date.simulation_date_id,company.company_id, company_name, profile_pic_link,simulation_name , date , status , price ,payment_date from company, simulation , simulation_date , applications"+
               " where user_id="+ userID + 
               " and simulation_date.simulation_id = simulation.simulation_id and company.company_id = simulation.company_id "+
               " and applications.simulation_date_id = simulation_date.simulation_date_id;" ; 

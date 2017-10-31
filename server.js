@@ -758,8 +758,6 @@ app.get("/user_simulations", function(request, response) {
 
     var userID = request.query.id  ;
 
-    
-
    var profileServer = require ("./page_modules/profileServer") 
     profileServer.GetUserSimulations(connection , response , userID  ); 
   
