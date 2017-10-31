@@ -1979,7 +1979,7 @@ app.post("/delete-simulation", function(request, response) {
 });
 
 
-app.delete("/delete-simulation-date", function(request, response) {
+app.post("/delete-simulation-date", function(request, response) {
     
     var simDateID = request.body.simulation_date_id ;
    
