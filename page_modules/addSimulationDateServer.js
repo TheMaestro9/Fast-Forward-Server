@@ -50,3 +50,43 @@ var qstring ="select simulation_date_id from simulation_date where "+
     });
 
 }
+
+
+exports.EditSimulationDate = function (connection , response  , simDateID , date ) {
+
+    var qstring = "UPDATE  simulation_date SET date =\""+ date+ 
+                                   "\"where simulation_date_id ="+simDateID;  
+    console.log("the query: "+qstring +"\n"); 
+     connection.query(qstring , function (err, result) {
+                  if (err) {
+                    console.log(err.message); 
+                      response.send(err); 
+                    
+                } else {
+                  response.send(result) ;
+                }
+
+        
+    });
+
+
+
+
+}
+
+
+exports.DeleteSimulationDate  = function (connection , response ,simulationDateID) { 
+
+     var qstring = "Delete from simulation_date where simulation_date_id = "+simulationDateID ; 
+                console.log("the query: "+qstring +"\n"); 
+                connection.query(qstring , function (err, result) {
+                    if (err) {
+                    console.log(err);
+                    response.status(500).send(err);
+                    } else {
+                    //response.send(result) ; 
+                    response.send(result) ; 
+                    }
+                }); 
+
+}

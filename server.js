@@ -1453,7 +1453,9 @@ app.get("/paymob_txn_response_callback", function(request, response) {
 
     // });
 
-    fs.readFile('TransactionMSG.html', 'utf8', function(err, data) {  
+   var success  =  request.query.success ; 
+   if (success) {
+    fs.readFile('successTransactionMSG.html', 'utf8', function(err, data) {  
     if (err) throw err;
     console.log(data);
   // var parts =  data.split(',') ; 
@@ -1462,7 +1464,20 @@ app.get("/paymob_txn_response_callback", function(request, response) {
    //var out = parts[0] + parts[1] ; 
       response.send(data) ; 
 
-});
+    });
+   }
+   else {
+    fs.readFile('failedTransactionMSG.html', 'utf8', function(err, data) {  
+    if (err) throw err;
+    console.log(data);
+  // var parts =  data.split(',') ; 
+  // price = 10 ; 
+  // parts[0]= parts[0] + price  ; 
+   //var out = parts[0] + parts[1] ; 
+      response.send(data) ; 
+
+    });
+   }
     //response.send(responseMsg); 
  }) ;
 
@@ -1708,6 +1723,49 @@ app.get("/apply", function(request, response) {
      var Company = require("./page_modules/companyServer") ;
      Company.apply(connection, response, simulationDateID , userID) ;  
 });
+
+
+app.get("/all-companies", function(request, response) {
+  qstring = "select company_name , company_id from company" ; 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        console.log(result);
+       response.send(result);
+      }
+
+    });
+    
+});
+
+app.post("/edit-simulation", function(request, response) {
+
+    // execute a query on our database
+    var SimId = request.body.simulation_id ; 
+    var simulationName = request.body.simulation_name; 
+    var Description = request.body.description; 
+    var price = request.body.price; 
+    var field = request.body.field_id; 
+
+
+     var addSimulationServer = require("./page_modules/addSimulationServer") ; 
+    addSimulationServer.EditSimulation(connection, response , SimId , simulationName ,Description , price , field) ; 
+});
+
+
+app.post("/edit-simulation-date", function(request, response) {
+
+    // execute a query on our database
+    var SimDateId = request.body.simulation_date_id ; 
+    var date = request.body.date; 
+
+     var addSimulationDateServer = require("./page_modules/addSimulationDateServer") ; 
+    addSimulationDateServer.EditSimulationDate(connection, response , SimDateId , date) ; 
+});
+
+
 app.get("/queryList", function(request, response) {
     
 
@@ -1911,6 +1969,15 @@ app.post("/delete-simulation", function(request, response) {
   
 });
 
+
+app.delete("/delete-simulation-date", function(request, response) {
+    
+    var simDateID = request.body.simulation_date_id ;
+   
+   var addSimulationDateServer = require ("./page_modules/addSimulationDateServer") 
+    addSimulationDateServer.DeleteSimulationDate(connection, response , simDateID);  
+  
+});
 
 app.post("/edit-company", function(request, response) {
     
