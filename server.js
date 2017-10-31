@@ -1804,12 +1804,23 @@ app.get("/allVideos", function(request, response) {
 app.get("/company_details", function(request, response) {
 
     var companyID = request.query.company_id ;  
+    //var userID = request.query.user_id ; 
     var CompanyServer  = require("./page_modules/companyServer") ; 
 
     CompanyServer.GetCompanyDetails(connection , response,companyID ) ; 
 
 });
 
+app.get("/followed-or-not", function(request, response) {
+
+    var userID = request.query.user_id ; 
+    var companyID = request.query.company_id ;  
+
+    var CompanyServer  = require("./page_modules/companyServer") ; 
+
+    CompanyServer.checkUserFollowCompany(connection , response,companyID , userID ) ;
+
+});
 
 
 app.get("/get_company_simulations", function(request, response) {
