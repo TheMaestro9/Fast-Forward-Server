@@ -1247,6 +1247,8 @@ app.post("/test", function(request, response) {
         var simulationDateID = IDAndPrice.simulation_date_id ; 
         var Price = IDAndPrice.price ; 
       
+        if (Price ==0) 
+          Price =50 ; 
         AuthenticationRequest(function (recObj){
       //   InsertGarbage("Finished the first step");
       // console.log("UserID", UserID); 
@@ -1293,7 +1295,8 @@ app.post("/test", function(request, response) {
 
         var simulationDateID = IDAndPrice.simulation_date_id ; 
         var Price = IDAndPrice.price ; 
-      
+        if (Price == 0)
+          Price = 50 ; 
         AuthenticationRequest(function (recObj){
       //   InsertGarbage("Finished the first step");
       // console.log("UserID", UserID); 
@@ -1402,22 +1405,29 @@ function ConfirmPayment (userID , simulationDateID ) {
 
     var simulationDateID = request.body.obj.order.shipping_data.last_name; 
 
-    var PaymentDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
+    var success  =  request.body.obj.success ;
+    //  InsertGarbage ("we got a post "+ success); 
+    if (success==true){  
 
-    var qstring = "update applications set status = 'accepted' , payment_date = '"+PaymentDate+"' where user_id = "+UserID +
-    " and simulation_date_id=" + simulationDateID ;  
+      var PaymentDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
 
-    InsertGarbage (qstring);  
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          
-          response.send(result);
-          }
-           
-    });
+      var qstring = "update applications set status = 'accepted' , payment_date = '"+PaymentDate+"' where user_id = "+UserID +
+      " and simulation_date_id=" + simulationDateID ;  
+
+      InsertGarbage (qstring);  
+      connection.query(qstring , function (err, result) {
+        if (err) {
+          console.log(err);
+        response.status(500).send(err);
+        } else {
+            
+            response.send(result);
+            }
+            
+      });
+    }
+    else 
+      InsertGarbage("POST success is false");
   //  InsertGarbage("Hello Post id "+ UserID) ; 
   //  InsertGarbage ("Hello Post price "+ price) ; 
   // InsertGarbage ("Hello Post form simID "+ simulationDateID) ; 
@@ -1452,7 +1462,9 @@ app.get("/paymob_txn_response_callback", function(request, response) {
     // });
 
    var success  =  request.query.success ; 
-   if (success) {
+   InsertGarbage("we got a transaction response and the success is "+success) ; 
+   
+   if (success=="true") {
     fs.readFile('successTransactionMSG.html', 'utf8', function(err, data) {  
     if (err) throw err;
     console.log(data);
@@ -2178,6 +2190,16 @@ app.get("/dateso", function(request, response) {
         console.log(result);
        response.send(result);
       }
+
+    });
+});
+
+app.get("/blank-page", function(request, response) {
+
+    fs.readFile('indo.html', 'utf8', function(err, data) {  
+      if (err) throw err;
+      console.log(data); 
+      response.send(data) ; 
 
     });
 });
