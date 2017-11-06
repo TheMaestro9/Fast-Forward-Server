@@ -1406,6 +1406,9 @@ function ConfirmPayment (userID , simulationDateID ) {
     var simulationDateID = request.body.obj.order.shipping_data.last_name; 
 
     var success  =  request.body.obj.success ;
+
+    if (typeof success =='undefined') // this condition is made for the explicit payment made from 
+      success = true ;                // the mobile application because no success parameter is passed
     //  InsertGarbage ("we got a post "+ success); 
     if (success==true){  
 
@@ -1518,21 +1521,10 @@ app.post("/add-video", function(request, response) {
     var companyID = request.body.company_id ;
     var description = request.body.description;
     var videoLink = request.body.video_link ;   
-    videoLink = videoLink.replace("watch?v=", "embed/");
+    var videoOrNot = request.body.video_or_not ; 
 
-    var qstring = "INSERT INTO company_video (company_id , video_link , description) "+
-                  "VALUES("+companyID+",'"+videoLink+"','"+description+"');";  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-        response.send(result); 
-      }
-
-    });
+     var videoServer = require("./page_modules/videoServer") ; 
+    videoServer.AddVideo(connection, response , companyID , description , videoLink , videoOrNot) ;  
    
 });
 app.get("/dislike-video", function(request, response) {
