@@ -2234,6 +2234,46 @@ app.get("/testEncrypt", function(request, response) {
         var loginServer = require ("./page_modules/loginServer") ; 
         loginServer.LoginAfterEncryption(connection,response,"nadinetarek19@gmail.com","hiiiiiii");
     });
+    app.get("/get-feedback-details", function(request, response) {
+      var simulationDate= request.query.simulation_date_id;
+      console.log("datteeee",request.query.simulation_date_id)
+      var qstring ="select c.company_name,c.profile_pic_link,s.simulation_name from simulation_date sd JOIN simulation s ON s.simulation_id = sd.simulation_id JOIN company c ON s.company_id=c.company_id where sd.simulation_date_id ="+simulationDate ; 
+     
+console.log("the query: "+qstring +"\n"); 
+connection.query(qstring , function (err, result) {
+if (err) 
+console.log(err);
+//response.status(500).send(err);
+else {
+console.log("Result",result)
+}
+
+});   
+      });
+    app.post("/addFeedback", function(request, response) {
+      
+          var user_id = request.body.user_id ;
+          var simulationDate= request.body.simulation_date_id;
+          var notes= request.body.notes;
+          var rating=request.body.rating; 
+              //  var bd = new Date (birthDate); 
+                // execute a query on our database
+                     var qstring = "INSERT INTO feedback (user_id,simulation_date_id,notes,rating) VALUES('" 
+                     +user_id +"','" +simulationDate +"','"+notes+"','" +rating+"')"; 
+                      console.log("the query: "+qstring +"\n"); 
+                      connection.query(qstring , function (err, result) {
+                        if (err) {
+                          console.log(err.message); 
+                          
+                      } else {
+                      
+                        console.log("Feedback added")
+                      }
+      
+              
+          });
+              
+      });
 // Now we go and listen for a connection.
 app.listen(port);
 
