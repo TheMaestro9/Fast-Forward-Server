@@ -23,7 +23,7 @@ var url = require ('url');
  var sendReq = require("request");
  var unirest = require("unirest"); 
 var fs =require('fs'); 
-
+var CryptoJS = require("crypto-js");
 
 /*
 app.use(function (req, res, next) {
@@ -2195,6 +2195,45 @@ app.get("/blank-page", function(request, response) {
 
     });
 });
+
+var html_dir = '../public';
+app.get("/forget1", function(request, response) {
+      console.log("IN forget")
+      response.type("text/html");
+      response.sendFile(__dirname +'/public/forget.html')  
+  });
+  app.post("/change", function(request, response) {
+    console.log("REQ PASS",request.body.pwd);
+    var wordArray = CryptoJS.enc.Utf8.parse(request.body.pwd);
+    var base64 = CryptoJS.enc.Base64.stringify(wordArray);
+    console.log('encrypted:', base64);
+    var qstring = "update user set password='"+base64+ "' where user_id=4";
+connection.query(qstring , function (err, result) {
+if (err) {
+console.log(err.message); 
+response.send(err) ;
+} else {
+  
+console.log("changed forgotten pass successfully");
+}
+  });
+});
+app.get("/testEncrypt", function(request, response) {
+  
+      // execute a query on our database
+      //var q = request.query.q ; 
+      console.log("IN GETTTTTTTTTTTTTTTTTTTTTT")
+      var loginServer = require ("./page_modules/loginServer") ; 
+      loginServer.encryptAllPasswords(connection,response);
+  });
+  app.get("/loginEncrypted", function(request, response) {
+    
+        // execute a query on our database
+        //var q = request.query.q ; 
+        console.log("IN GETTTTTTTTTTTTTTTTTTTTTT")
+        var loginServer = require ("./page_modules/loginServer") ; 
+        loginServer.LoginAfterEncryption(connection,response,"nadinetarek19@gmail.com","hiiiiiii");
+    });
 // Now we go and listen for a connection.
 app.listen(port);
 
