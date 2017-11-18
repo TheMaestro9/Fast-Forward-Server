@@ -30,10 +30,16 @@ qstring = " select simulation_date.simulation_date_id,company.company_id, compan
              var GHF = require("./GlobalHelperFunctions") ;
              result[i].date = GHF.TransfromDate( result[i].date)  ;
              if ( result[i].status == "pending payment"){
+                var currentDate = new Date() ; 
                 var AcceptanceDeadline = new Date( result[i].payment_date) ; 
                 AcceptanceDeadline .setDate( AcceptanceDeadline.getDate() + 1 ) ; 
                 // AcceptanceDeadline .setHours( AcceptanceDeadline.getHours() + 2 ) ; 
-                result[i]["acceptance_deadline"] = AcceptanceDeadline ; 
+                // if(currentDate > AcceptanceDeadline ){
+                //   DeleteApplication(connection , userID , result[i].simulation_date_id) ; 
+                //   result.splice(i , 1) ; 
+                // }
+                // else 
+                  result[i]["acceptance_deadline"] = AcceptanceDeadline ; 
              }
           }
           
@@ -42,6 +48,19 @@ qstring = " select simulation_date.simulation_date_id,company.company_id, compan
   });
 
 }
+
+
+function DeleteApplication (connection , userID , simulationID) {
+  var qstring = "delete from applications where user_id="+userID+ " and simulation_date_id="+simulationID;
+    connection.query(qstring , function (err, result) {
+    if (err) {
+      console.log(err.message); 
+    } else {
+    console.log("deleted successfully");
+    }
+    });
+  
+  }
 exports.EditUser = function (connection , response  , userName 
 , degree ,user_email , school , phone_no  , userID) { 
 
