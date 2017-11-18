@@ -1247,6 +1247,8 @@ app.post("/test", function(request, response) {
         var simulationDateID = IDAndPrice.simulation_date_id ; 
         var Price = IDAndPrice.price ; 
       
+        if (Price ==0) 
+          Price =50 ; 
         AuthenticationRequest(function (recObj){
       //   InsertGarbage("Finished the first step");
       // console.log("UserID", UserID); 
@@ -1293,7 +1295,8 @@ app.post("/test", function(request, response) {
 
         var simulationDateID = IDAndPrice.simulation_date_id ; 
         var Price = IDAndPrice.price ; 
-      
+        if (Price == 0)
+          Price = 50 ; 
         AuthenticationRequest(function (recObj){
       //   InsertGarbage("Finished the first step");
       // console.log("UserID", UserID); 
@@ -1402,22 +1405,32 @@ function ConfirmPayment (userID , simulationDateID ) {
 
     var simulationDateID = request.body.obj.order.shipping_data.last_name; 
 
-    var PaymentDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
+    var success  =  request.body.obj.success ;
 
-    var qstring = "update applications set status = 'accepted' , payment_date = '"+PaymentDate+"' where user_id = "+UserID +
-    " and simulation_date_id=" + simulationDateID ;  
+    if (typeof success =='undefined') // this condition is made for the explicit payment made from 
+      success = true ;                // the mobile application because no success parameter is passed
+    //  InsertGarbage ("we got a post "+ success); 
+    if (success==true){  
 
-    InsertGarbage (qstring);  
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-          
-          response.send(result);
-          }
-           
-    });
+      var PaymentDate = new Date ().toISOString().replace("T"," ").replace("Z","") ; 
+
+      var qstring = "update applications set status = 'accepted' , payment_date = '"+PaymentDate+"' where user_id = "+UserID +
+      " and simulation_date_id=" + simulationDateID ;  
+
+      InsertGarbage (qstring);  
+      connection.query(qstring , function (err, result) {
+        if (err) {
+          console.log(err);
+        response.status(500).send(err);
+        } else {
+            
+            response.send(result);
+            }
+            
+      });
+    }
+    else 
+      InsertGarbage("POST success is false");
   //  InsertGarbage("Hello Post id "+ UserID) ; 
   //  InsertGarbage ("Hello Post price "+ price) ; 
   // InsertGarbage ("Hello Post form simID "+ simulationDateID) ; 
@@ -1452,7 +1465,9 @@ app.get("/paymob_txn_response_callback", function(request, response) {
     // });
 
    var success  =  request.query.success ; 
-   if (success) {
+   InsertGarbage("we got a transaction response and the success is "+success) ; 
+   
+   if (success=="true") {
     fs.readFile('successTransactionMSG.html', 'utf8', function(err, data) {  
     if (err) throw err;
     console.log(data);
@@ -1506,21 +1521,10 @@ app.post("/add-video", function(request, response) {
     var companyID = request.body.company_id ;
     var description = request.body.description;
     var videoLink = request.body.video_link ;   
-    videoLink = videoLink.replace("watch?v=", "embed/");
+    var videoOrNot = request.body.video_or_not ; 
 
-    var qstring = "INSERT INTO company_video (company_id , video_link , description) "+
-                  "VALUES("+companyID+",'"+videoLink+"','"+description+"');";  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-
-        response.send(result); 
-      }
-
-    });
+     var videoServer = require("./page_modules/videoServer") ; 
+    videoServer.AddVideo(connection, response , companyID , description , videoLink , videoOrNot) ;  
    
 });
 app.get("/dislike-video", function(request, response) {
@@ -1804,12 +1808,23 @@ app.get("/allVideos", function(request, response) {
 app.get("/company_details", function(request, response) {
 
     var companyID = request.query.company_id ;  
+    //var userID = request.query.user_id ; 
     var CompanyServer  = require("./page_modules/companyServer") ; 
 
     CompanyServer.GetCompanyDetails(connection , response,companyID ) ; 
 
 });
 
+app.get("/followed-or-not", function(request, response) {
+
+    var userID = request.query.user_id ; 
+    var companyID = request.query.company_id ;  
+
+    var CompanyServer  = require("./page_modules/companyServer") ; 
+
+    CompanyServer.checkUserFollowCompany(connection , response,companyID , userID ) ;
+
+});
 
 
 app.get("/get_company_simulations", function(request, response) {
@@ -1968,7 +1983,7 @@ app.post("/delete-simulation", function(request, response) {
 });
 
 
-app.delete("/delete-simulation-date", function(request, response) {
+app.post("/delete-simulation-date", function(request, response) {
     
     var simDateID = request.body.simulation_date_id ;
    
@@ -2167,6 +2182,16 @@ app.get("/dateso", function(request, response) {
         console.log(result);
        response.send(result);
       }
+
+    });
+});
+
+app.get("/blank-page", function(request, response) {
+
+    fs.readFile('indo.html', 'utf8', function(err, data) {  
+      if (err) throw err;
+      console.log(data); 
+      response.send(data) ; 
 
     });
 });

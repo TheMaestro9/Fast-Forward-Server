@@ -1,9 +1,10 @@
  
  exports.GetAllVideos  = function (connection , response  , UserID) { 
 
- var qstring = "select company_video.video_id, company.company_id, company_name , "+ 
-                  "video_link , company_video.description , likes , profile_pic_link"+ 
-                  " from company_video , company where company.company_id = company_video.company_id ;" ;  
+ var qstring = "select company_video.video_id, company.company_id, company_name , video_or_not, "+ 
+                "video_link , company_video.description , likes , profile_pic_link"+ 
+                " from company_video , company where company.company_id = company_video.company_id "+
+                "order by video_id desc ;" ;  
     console.log("the query: "+qstring +"\n"); 
 
    // var sync = Futures.sequence;
@@ -134,4 +135,22 @@
     });
  }
 
+ exports.AddVideo  = function (connection , response  , companyID , description , videoLink , videoOrNot) { 
 
+ videoLink = videoLink.replace("watch?v=", "embed/");
+
+    var qstring = "INSERT INTO company_video (company_id , video_link , description, video_or_not) "+
+                  "VALUES("+companyID+",\""+videoLink+"\",\""+description+"\", "+ videoOrNot+");";  
+    console.log("the query: "+qstring +"\n"); 
+    connection.query(qstring , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+
+        response.send(result); 
+      }
+
+    });
+
+ }
