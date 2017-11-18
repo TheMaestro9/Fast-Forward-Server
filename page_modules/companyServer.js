@@ -118,18 +118,20 @@ function getSimDetails (connection , simulations , index , userID,   callback ){
 
 }
 
-function getNumberOfApplicants (connection , simulations , index, simID , callback){
+getNumberOfApplicants=function  (connection , simulations , index, simID , callback){
 
+var currentDate = new Date ().toISOString().replace("T"," ").replace("Z","") 
+currentDate = JSON.stringify(currentDate)
 var  qstring =  "select count(*) as count  from simulation , simulation_date , applications "+
                 "where simulation.simulation_id = simulation_date.simulation_id and "+  
                 "simulation_date.simulation_date_id = applications.simulation_date_id "+
-                "and simulation.simulation_id ="+ simID ; 
+                "and simulation.simulation_id ="+ simID +" and simulation_date.date > "+ currentDate; 
 
        console.log("the query: "+qstring +"\n"); 
       connection.query(qstring , function (err, result) {
       if (err) {
       // response.status(500).send(err);
-        console.log("error in get num of applicants") ; 
+        console.log(err,"error in get num of applicants") ; 
       } else { 
         simulations[index]["number_of_applicants"] =result[0].count;  
         callback(simulations) ; 
@@ -160,7 +162,7 @@ function getSimulationStatus (connection , simulations , index, simID , userID ,
       connection.query(qstring , function (err, result) {
       if (err) {
       // response.status(500).send(err);
-        console.log("error in get num of applicants") ; 
+        console.log(err,"error in get num of applicants") ; 
       } else { 
 
         if(result.length > 1 )
