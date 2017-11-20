@@ -2231,8 +2231,11 @@ app.get("/loginEncrypted", function (request, response) {
 });
 app.get("/get-feedback-details", function (request, response) {
   var simulationDate = request.query.simulation_date_id;
-  console.log("datteeee", request.query.simulation_date_id)
-  var qstring = "select c.company_name,c.profile_pic_link,s.simulation_name from simulation_date sd JOIN simulation s ON s.simulation_id = sd.simulation_id JOIN company c ON s.company_id=c.company_id where sd.simulation_date_id =" + simulationDate;
+  console.log("datteeee", request.query.simulation_date_id) ; 
+
+  var qstring = "select c.company_name,c.profile_pic_link,s.simulation_name"+
+  " from simulation_date sd JOIN simulation s ON s.simulation_id = sd.simulation_id "+
+  " JOIN company c ON s.company_id=c.company_id where sd.simulation_date_id =" + simulationDate;
 
   console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
@@ -2240,12 +2243,13 @@ app.get("/get-feedback-details", function (request, response) {
       console.log(err);
     //response.status(500).send(err);
     else {
-      console.log("Result", result)
+      console.log("Result", result) ; 
+      response.send(result) ; 
     }
 
   });
 });
-app.post("/addFeedback", function (request, response) {
+app.post("/add-feedback", function (request, response) {
 
   var user_id = request.body.user_id;
   var simulationDate = request.body.simulation_date_id;
@@ -2253,8 +2257,9 @@ app.post("/addFeedback", function (request, response) {
   var rating = request.body.rating;
   //  var bd = new Date (birthDate); WW
   // execute a query on our database
-  var qstring = "INSERT INTO feedback (user_id,simulation_date_id,notes,rating) VALUES('"
-    + user_id + "','" + simulationDate + "','" + notes + "','" + rating + "')";
+  notes = JSON.stringify(notes) ; 
+  var qstring = "INSERT INTO feedback (user_id,simulation_date_id,notes,rating) VALUES("
+    + user_id + ",'" + simulationDate + "'," + notes + "," + rating + ")";
   console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
@@ -2262,7 +2267,8 @@ app.post("/addFeedback", function (request, response) {
 
     } else {
 
-      console.log("Feedback added")
+      console.log("Feedback added"); 
+      response.send(result); 
     }
 
 
