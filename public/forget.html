@@ -11,16 +11,17 @@
     <script src="../Fast-Forward-Server/localServer.js"></script>
 </head>
 <body>
-        
 <form onsubmit="return validatePassword()" method="post" action="/change">
        
 <div class="form-group" style="display: flex;
 flex-direction: column;
 align-items: center;
 padding: 5%;">
+<div><input type="hidden" name="userID" id="user"></input></div>
                        <div>
                                 <label for="pwd">Password</label>
                             </div>
+                            
                             <div>
                                 <input type="password" class="form-control" name="pwd" id="pass1" required>
                             </div>
@@ -40,9 +41,11 @@ padding: 5%;">
 <script>
 var password = document.getElementById("pass1")
   , confirm_password = document.getElementById("pass2");
-
+  
 function validatePassword(){
- 
+    var url=window.location.href
+    document.getElementById("user").value = url
+    console.log("SCRIPPT",  document.getElementById("user").value)
   if(password.value != confirm_password.value) {
       console.log("PASS 1",password.value)
       console.log("PASS 2",confirm_password.value)

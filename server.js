@@ -2193,22 +2193,46 @@ app.get("/forget1", function (request, response) {
   response.type("text/html");
   response.sendFile(__dirname + '/public/forget.html')
 });
-app.post("/change", function (request, response) {
-  console.log("REQ PASS", request.body.pwd);
+
+app.post("/change", function(request, response) {
+  console.log("REQ PASS",request.body.pwd);
+  var id = request.body.userID.split('=')[1]
+  console.log("IDDDD",id)
   var wordArray = CryptoJS.enc.Utf8.parse(request.body.pwd);
   var base64 = CryptoJS.enc.Base64.stringify(wordArray);
   console.log('encrypted:', base64);
-  var qstring = "update user set password='" + base64 + "' where user_id=4";
-  connection.query(qstring, function (err, result) {
-    if (err) {
-      console.log(err.message);
-      response.send(err);
-    } else {
+  var qstring = "update user set password='"+base64+ "' where user_id="+id;
+connection.query(qstring , function (err, result) {
+if (err) {
+console.log(err.message); 
+response.send(err) ;
+} else {
 
-      console.log("changed forgotten pass successfully");
-    }
-  });
+console.log("changed forgotten pass successfully");
+}
 });
+});
+
+app.get("/messageCompany",function(request,response){
+var con = request.query.content; 
+console.log("content",con,request.query.content)
+var value = con.split(':')[1]
+// var id=value[1];
+  console.log("IDDDD",value)
+var qstring = "select user_name from user where user_id ="+value; 
+console.log("the query: "+qstring +"\n"); 
+connection.query(qstring , function (err, result) {
+  if (err) {
+    console.log(err);
+   response.status(500).send(err);
+  }
+  else{
+    var loginServer = require ("./page_modules/GlobalHelperFunctions") ; 
+    loginServer.SendAnEmail("support@fastforwardsim.com","Message",con+" and name: "+result[0].user_name);
+  }
+});
+
+})
 app.get("/testEncrypt", function (request, response) {
 
   // execute a query on our database
