@@ -2221,13 +2221,9 @@ app.get("/loginEncrypted", function (request, response) {
 
   // execute a query on our database
   //var q = request.query.q ; 
-  var userEmail = request.query.user_email ; 
-  var password = request.query.password ; 
-  
-
   console.log("IN GETTTTTTTTTTTTTTTTTTTTTT")
   var loginServer = require("./page_modules/loginServer");
-  loginServer.LoginAfterEncryption(connection, response, userEmail, password );
+  loginServer.LoginAfterEncryption(connection, response, "nadinetarek19@gmail.com", "hiiiiiii");
 });
 app.get("/get-feedback-details", function (request, response) {
   var simulationDate = request.query.simulation_date_id;
@@ -2269,15 +2265,6 @@ app.post("/addFeedback", function (request, response) {
   });
 
 });
-
-
-app.get("/encrypt-one-password", function (request, response) {
-
-  var userId = request.query.user_id ; 
-  var loginServer = require("./page_modules/loginServer");
-  loginServer.encryptOnePassword(connection, response , userId);
-
-}); 
 // Now we go and listen for a connection.
 app.listen(port);
 

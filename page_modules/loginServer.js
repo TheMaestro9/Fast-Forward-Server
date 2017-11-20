@@ -104,7 +104,7 @@ function getUserPassword (connection , response , userEmail , callback){
 }
 
 exports.encryptAllPasswords=function(connection,response){
-  connection.query('SELECT password FROM user', function(err,result) {
+  connection.query('SELECT password , user_id FROM user', function(err,result) {
     if (err) {
       console.log(err);
      response.status(500).send(err);
@@ -116,7 +116,7 @@ exports.encryptAllPasswords=function(connection,response){
         var wordArray = CryptoJS.enc.Utf8.parse(result[i].password);
         var base64 = CryptoJS.enc.Base64.stringify(wordArray);
         console.log('encrypted:', base64);
-        var qstring = "update user set password='"+base64+ "' where user_id="+(i+1);
+        var qstring = "update user set password=\""+base64+ "\" where user_id="+result[i].user_id;
         connection.query(qstring , function (err, result) {
         if (err) {
         console.log(err.message); 
@@ -126,6 +126,33 @@ exports.encryptAllPasswords=function(connection,response){
         }
           });
       };
+    }
+  
+  });
+}
+
+
+exports.encryptOnePassword=function(connection,response, userId){
+  connection.query('SELECT password , user_id FROM user where user_id ='+userId , function(err,result) {
+    if (err) {
+      console.log(err);
+     response.status(500).send(err);
+    } else {
+      console.log('Password: ', result.length);
+        console.log('Password: ',0, result[0].password)
+        var wordArray = CryptoJS.enc.Utf8.parse(result[0].password);
+        var base64 = CryptoJS.enc.Base64.stringify(wordArray);
+        console.log('encrypted:', base64);
+        var qstring = "update user set password='"+base64+ "' where user_id="+result[0].user_id;
+        connection.query(qstring , function (err, result) {
+        if (err) {
+        console.log(err.message); 
+        response.send(err) ;
+        } else {
+         console.log("PASSS ENCRYPTEDDDD")
+        }
+          });
+    
     }
   
   });
