@@ -28,6 +28,7 @@ qstring = " select simulation_date.simulation_date_id,company.company_id, compan
           for ( i = 0 ; i < result.length ; i++){
 
              var GHF = require("./GlobalHelperFunctions") ;
+             result[i]["applied_simulation_date"] = result[i].date ; 
              result[i].date = GHF.TransfromDate( result[i].date)  ;
              if ( result[i].status == "pending payment"){
                 var currentDate = new Date() ; 
