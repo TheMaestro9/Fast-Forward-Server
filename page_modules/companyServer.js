@@ -11,7 +11,7 @@ exports.GetPromoCodeDiscount = function (connection, response  , promoCode, comp
        response.status(500).send(err);
       } else {
           
-          response.send(result);
+          response.send(result[0]);
           }
            
     });
