@@ -78,41 +78,63 @@ exports.GetCompanySimulations  = function (connection , response , companyID , u
 
 function getSimDetails (connection , simulations , index , userID,   callback ){
     var SimID = simulations[index].simulation_id ; 
+    console.log("SIMULATION ID PRICE",simulations[index].price)
     var currentDate = new Date ().toISOString().replace("T"," ").replace("Z","") 
       // get dates 
-    var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" +SimID +" and date > '"+currentDate +"';" ;  
-    console.log("the query: "+qstring +"\n"); 
-    connection.query(qstring , function (err, result) {
+    var updatedPrice=-1;
+    var qstring1="select price from simulation_promocode where user_id='"+userID+"'"+"and simulation_id='"+SimID+"'";
+    console.log("qstring1") ;
+    connection.query(qstring1 , function (err, result) {
       if (err) {
       // response.status(500).send(err);
-      console.log("error in get dates") ; 
+      console.log("error in query string 1") ; 
     } else {
-        var Dates = [] ;
-        
-        for (i = 0 ; i< result.length ; i++){
-          var temp = {
-          "date_id":"" , 
-          "date":""  
-        } ; 
+      if(result.length>0){
+        updatedPrice=result[0].price
+        console.log("THE SELECTED PRICE",updatedPrice)
 
-           var GHF = require ("./GlobalHelperFunctions") ; 
-           temp.date_id = result[i].simulation_date_id ;
-           temp.date = GHF.TransfromDate( result[i].date) ;
-           Dates.push(temp) ; 
-           console.log(result[i]) ;
-        }
-        //console.log("done ya maw");
-        simulations[index]["dates"] =Dates; 
-
-        getNumberOfApplicants(connection , simulations , index ,SimID, function(TheSim){
-              getSimulationStatus(connection , TheSim , index ,SimID , userID , function(TheFinalSim){
-                            callback(TheFinalSim) ; 
-              });
-
-        }) ;
       }
+       
 
+     var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" +SimID +" and date > '"+currentDate +"';" ;  
+     console.log("the query: "+qstring +"\n"); 
+     connection.query(qstring , function (err, result) {
+       if (err) {
+       // response.status(500).send(err);
+       console.log("error in get dates") ; 
+     } else {
+         var Dates = [] ;
+         
+         for (i = 0 ; i< result.length ; i++){
+           var temp = {
+           "date_id":"" , 
+           "date":""  
+         } ; 
+ 
+            var GHF = require ("./GlobalHelperFunctions") ; 
+            temp.date_id = result[i].simulation_date_id ;
+            temp.date = GHF.TransfromDate( result[i].date) ;
+            Dates.push(temp) ; 
+            console.log(result[i]) ;
+         }
+         //console.log("done ya maw");
+         simulations[index]["dates"] =Dates; 
+         if(updatedPrice!=-1)
+         simulations[index]["price"]=updatedPrice;
+         console.log("UPDATTTTED", simulations[index]["price"])
+         getNumberOfApplicants(connection , simulations , index ,SimID, function(TheSim){
+               getSimulationStatus(connection , TheSim , index ,SimID , userID , function(TheFinalSim){
+                             callback(TheFinalSim) ; 
+               });
+ 
+         }) ;
+       }
+ 
+     });
+
+    }
     });
+   
   
   
 
@@ -243,5 +265,53 @@ exports.checkUserFollowCompany=function ( connection , response , CompanyID  , U
 
   };
 
+  exports.addPromoCode= function (request, response) {
+    var pormoCode = request.query.promo_code;
+    var companyID = request.query.company_id;
+    var simulationID=request.query.simulation_id;
+    var userID=request.query.user_id;
+    var finalprice;
+      var toSend = {
+        "result": false
+      }
+      str = "select * from company_promo_code where (company_id ='" + companyID + "' or company_id = 0)" +
+        " and promo_code='" + pormoCode + "'";
+      console.log(str);
+      connection.query(str, function (err, result) {
+        if (err) {
+          console.log(err);
+          response.status(500).send(err);
+        } else {
+          finalprice=result[0].price
+          console.log("PRICEEEEEEEEEE",result[0].price)
+          str1="select price from simulation where simulation_id="+ simulationID ; 
+            connection.query(str1, function (err, result) {
+            if (err) {
+              console.log(err);
+              response.status(500).send(err);
+            } else {
+             console.log("okk",result[0].price)
+             finalprice=1-(finalprice*result[0].price)
+             console.log("FINAL PRICE",finalprice)
+             str2="insert into simulation_promocode(simulation_id,promocode,user_id,price) VALUES('"+simulationID+"','"+pormoCode+
+             "','"+userID+"','"+finalprice+"');"
+             console.log(str2)
+             connection.query(str2, function (err, result) {
+               if (err) {
+                 console.log(err);
+                 response.status(500).send(err);
+               } else {
+                console.log("INSERTEDDD")
+               }
+             response.send(result);
+           })
+            }
+         
+        })
+          
+      }
+      });
+    };
+  
 
 
