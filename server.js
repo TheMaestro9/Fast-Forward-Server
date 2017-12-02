@@ -125,7 +125,7 @@ app.put("/words", function (request, response) {
       console.log(error);
       response.status(500).send(error);
     } else {
-      console.log(result);
+      //console.log(result);
       response.send(result);
     }
   });
@@ -141,7 +141,7 @@ app.get("/words", function (request, response) {
       console.log(err);
       response.status(500).send(err);
     } else {
-      console.log(result);
+      //console.log(result);
       response.send(result);
     }
 
@@ -178,7 +178,7 @@ app.get("/check-connection", function (request, response) {
 app.get("/edit-user", function (request, response) {
 
 
-  //console.log(request.query); 
+  ////console.log(request.query); 
   // response.send(request); 
   // response.send(request.query); 
   var userID = request.query.user_id;
@@ -245,8 +245,8 @@ app.get("/check-version", function (request, response) {
   //     console.log(err);
   //    response.status(500).send(err);
   //   } else {
-  //       console.log(result) ; 
-  //       console.log(result[0].appValue) ; 
+  //       //console.log(result) ; 
+  //       //console.log(result[0].appValue) ; 
   //       var NeededVersion = parseInt(result[0].appValue) ; 
   //       console.log(NeededVersion);
   //       if ( version > NeededVersion ){
@@ -324,7 +324,7 @@ app.get("/update-version", function (request, response) {
 });
 app.post("/edit-user", function (request, response) {
 
-  //console.log(request.query); 
+  ////console.log(request.query); 
   // response.send(request); 
   // response.send(request.query); 
   var userID = request.body.user_id;
@@ -343,7 +343,7 @@ app.get("/query", function (request, response) {
 
   // execute a query on our database
   var qstring = request.query.q;
-  console.log(qstring);
+ // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -363,7 +363,7 @@ app.get("/query", function (request, response) {
       }
       response.status(500).send(err);
     } else {
-      console.log(result);
+      //console.log(result);
       response.send(result);
     }
 
@@ -478,7 +478,7 @@ function insertInterests(userID, interests) {
 
 
     qstring = "insert into user_interests values (" + userID + ",'" + interests[i] + "')";
-    console.log(qstring);
+   // console.log(qstring);
     connection.query(qstring, function (err, result) {
 
     });
@@ -490,7 +490,7 @@ function insertInterests(userID, interests) {
 
 
 //     qstring = "insert into user_attending_expo values ("+userID+")" ; 
-//     console.log(qstring); 
+//    // console.log(qstring); 
 //     connection.query(qstring , function (err, result) {
 
 //     });
@@ -644,13 +644,13 @@ app.get("/get-ticket-price", function (request, response) {
   qstring = "select price from  promo_code_price , user_promo_code " +
     "where promo_code_price.promo_code = user_promo_code.promo_code and " +
     "user_id =" + UserID + " ; ";
-  console.log(qstring);
+ // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
       response.status(500).send(err);
     } else {
-      console.log(result);
+      //console.log(result);
       if (result.length != 0)
         response.send(result[0]);
       else
@@ -925,7 +925,7 @@ function CreateOrder(data, UserID, Price, SimulationDateID, callback) {
   req.end(function (res) {
     if (res.error) throw new Error(res.error);
     console.log("hello I came out");
-    console.log(res.body);
+    //console.log(res.body);
     data["orderId"] = res.body.id;
     callback(data);
   });
@@ -974,7 +974,7 @@ req.send({
 req.end(function (res) {
   if (res.error) throw new Error(res.error);
    data["paymentToken"] = res.body.token ; 
-  //console.log(res.body);
+  ////console.log(res.body);
   InsertGarbage("inside payment now sending the fucken response ");
   InsertGarbage("inside payment now sending the fucken response2 " +data.orderId );
   InsertGarbage("inside payment now sending the fucken response2 " + data.paymentToken );
@@ -1033,7 +1033,7 @@ function CreatePaymentKey(data, price, callback) {
     }
     data["paymentToken"] = res.body.token;
     // InsertGarbage("inside payment now sending the fucken response2 " + data.paymentToken );
-    console.log(res.body);
+    //console.log(res.body);
     callback(data);
   });
 }
@@ -1068,7 +1068,7 @@ function uploadIframe(data, callback) {
   req.end(function (res) {
     if (res.error) throw new Error(res.error);
 
-    console.log(res.body);
+    //console.log(res.body);
     callback(res.body);
   });
 }
@@ -1080,7 +1080,7 @@ function InsertGarbage(data) {
       console.log(err);
       // response.status(500).send(err);
     } else {
-      console.log(result);
+      //console.log(result);
       // response.send(result);
     }
 
@@ -1234,7 +1234,7 @@ function getSimDateIDForUser(userID, SimulationID, callback) {
       console.log(err);
       callback(err);
     } else {
-      console.log(result);
+      //console.log(result);
       data = {
         "simulation_date_id": result[0].simulation_date_id,
         "price": result[0].price
@@ -1379,7 +1379,7 @@ app.post("/paymob_notification_callback?hmac=9FAEDD1FF8E8B2E9B78E6BDB60C2A14A", 
       console.log(err);
       response.status(500).send(err);
     } else {
-      console.log(result);
+      //console.log(result);
       // response.send(result);
     }
 
@@ -1449,7 +1449,7 @@ app.post("/paymob_notification_callback", function (request, response) {
   //     console.log(err);
   //    response.status(500).send(err);
   //   } else {
-  //     console.log(result);
+  //     //console.log(result);
   //   // response.send(result);
   //   }
 
@@ -1466,7 +1466,7 @@ app.get("/paymob_txn_response_callback", function (request, response) {
   //     console.log(err);
   //    response.status(500).send(err);
   //   } else {
-  //     console.log(result);
+  //     //console.log(result);
   //   // response.send(result);
   //   }
 
@@ -1569,7 +1569,7 @@ app.get("/user-liked-videos", function (request, response) {
         result[i]["liked_by_user"] = true;
       }
 
-      console.log(result);
+      //console.log(result);
       // console.log(JSON.stringify(toSend)); 
       response.send(result);
 
@@ -1602,7 +1602,7 @@ app.get("/not-liked-videos", function (request, response) {
         result[i]["liked_by_user"] = false;
       }
 
-      console.log(result);
+      //console.log(result);
       // console.log(JSON.stringify(toSend)); 
       response.send(result);
 
@@ -1727,7 +1727,7 @@ app.get("/all-companies", function (request, response) {
       console.log(err);
       response.status(500).send(err);
     } else {
-      console.log(result);
+     // ////console.log(result);
       response.send(result);
     }
 
@@ -1770,13 +1770,13 @@ app.get("/queryList", function (request, response) {
     qstring = qList[i];
     if (qstring.length == 0)
       continue;
-    console.log(qstring);
+   // console.log(qstring);
     connection.query(qstring, function (err, result) {
       if (err) {
         console.log(err);
         response.status(500).send(err);
       } else {
-        console.log(result);
+        ////console.log(result);
         // response.send(result);
       }
 
@@ -1926,7 +1926,7 @@ function getSimDetails(simulations, index, userID, callback) {
         temp.date_id = result[i].simulation_date_id;
         temp.date = TransfromDate(result[i].date);
         Dates.push(temp);
-        console.log(result[i]);
+        ////console.log(result[i]);
       }
       //console.log("done ya maw");
       simulations[index]["dates"] = Dates;
@@ -2031,13 +2031,13 @@ app.get("/gar", function (request, response) {
   var q = request.query.q;
 
   qstring = "INSERT INTO Garbage VALUES ('" + q + "');";
-  console.log(qstring);
+ // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
       response.status(500).send(err);
     } else {
-      console.log(result);
+      ////console.log(result);
       response.send(result);
     }
 
@@ -2048,14 +2048,14 @@ app.get("/gar", function (request, response) {
 function insertNewDate(simID, date, response, callback) {
 
   qstring = "INSERT INTO simulation_date ( simulation_id  , date , votes ) VALUES (" + simID + ",'" + date + "',1);";
-  console.log(qstring);
+ // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
       response.status(500).send(err);
       InsertGarbage("error in insert new date ");
     } else {
-      // console.log(result);
+      // ////console.log(result);
       // response.send(result);
       callback();
     }
@@ -2067,14 +2067,14 @@ function insertNewDate(simID, date, response, callback) {
 function getSimDateID(simID, date, response, callback) {
 
   qstring = "select simulation_date_id from simulation_date where simulation_id=" + simID + " and date ='" + date + "'";
-  console.log(qstring);
+ // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
       response.status(500).send(err);
       InsertGarbage("error in get sim id ");
     } else {
-      // console.log(result);
+      // ////console.log(result);
       callback(result[0].simulation_date_id);
     }
 
@@ -2087,14 +2087,14 @@ function getSimDateID(simID, date, response, callback) {
 function insertUserVote(userID, simDateID, response, callback) {
 
   qstring = "INSERT INTO date_voting  VALUES (" + userID + "," + simDateID + ");";
-  console.log(qstring);
+ // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
       InsertGarbage("error in insert user vote ");
       response.status(500).send(err);
     } else {
-      // console.log(result);
+      // ////console.log(result);
       //  callback(result);
       callback(result);
     }
@@ -2146,13 +2146,13 @@ app.get("/get-applicants-details", function (request, response) {
 
 
 
-  console.log(qstring);
+ //// console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
       response.status(500).send(err);
     } else {
-      console.log(result);
+      //console.log(result);
       response.send(result);
     }
 
@@ -2166,13 +2166,13 @@ app.get("/dateso", function (request, response) {
 
 
   qstring = "select * from simulation_date";
-  console.log(qstring);
+ // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
       response.status(500).send(err);
     } else {
-      console.log(result);
+      //console.log(result);
       response.send(result);
     }
 

@@ -6,7 +6,7 @@ exports.Login  = function (connection , response , UserEmail ,password) {
     } ; 
     // execute a query on our database
     var qstring = "select user_name , user_id , company_or_not from user where user_email ='"+UserEmail+"' and password='"+password +"'"; 
-    console.log("the query: "+qstring +"\n"); 
+   // console.log("the query: "+qstring +"\n"); 
     connection.query(qstring , function (err, result) {
       if (err) {
         console.log(err);
@@ -53,7 +53,7 @@ exports.ForgotPassword  = function (connection , response , UserEmail ) {
           GHF = require("./GlobalHelperFunctions") ; 
           console.log("going to send the email") ;
           var qstring = "select user_id from user where user_email ='"+UserEmail+"'"; 
-          console.log("the query: "+qstring +"\n"); 
+         // console.log("the query: "+qstring +"\n"); 
           connection.query(qstring , function (err, r) {
             if (err) {
               console.log(err);
@@ -75,7 +75,7 @@ exports.ForgotPassword  = function (connection , response , UserEmail ) {
 }
 function getUserID(connection,response,userEmail,callback){
   var qstring = "select user_id from user where user_email ='"+userEmail+"'"; 
-  console.log("the query: "+qstring +"\n"); 
+ // console.log("the query: "+qstring +"\n"); 
   connection.query(qstring , function (err, result) {
     if (err) {
       console.log(err);
@@ -90,7 +90,7 @@ function getUserID(connection,response,userEmail,callback){
 function getUserPassword (connection , response , userEmail , callback){
 
     var qstring = "select password from user where user_email ='"+userEmail+"'"; 
-    console.log("the query: "+qstring +"\n"); 
+   // console.log("the query: "+qstring +"\n"); 
     connection.query(qstring , function (err, result) {
       if (err) {
         console.log(err);
@@ -167,7 +167,7 @@ exports.LoginAfterEncryption  = function (connection , response , UserEmail ,pas
       } ; 
       // execute a query on our database
       var qstring = "select user_name , user_id , company_or_not from user where user_email ='"+UserEmail+"' and password='"+base64 +"'"; 
-      console.log("the query: "+qstring +"\n"); 
+     // console.log("the query: "+qstring +"\n"); 
       connection.query(qstring , function (err, result) {
         if (err) {
           console.log(err);

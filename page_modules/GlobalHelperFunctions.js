@@ -91,7 +91,7 @@ exports.FollowCompany = function (connection, response, userID, companyID) {
 
 
   var qstring = "INSERT INTO user_follow_company VALUES(" + userID + "," + companyID + ");";
-  console.log("the query: " + qstring + "\n");
+ // console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -109,7 +109,7 @@ exports.UnFollowCompany = function (connection, response, userID, companyID) {
 
   var qstring = "DELETE FROM user_follow_company where " +
     "user_id =" + userID + " and company_id = " + companyID + ";";
-  console.log("the query: " + qstring + "\n");
+ // console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);

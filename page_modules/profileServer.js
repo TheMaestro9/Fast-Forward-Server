@@ -2,7 +2,7 @@ exports.GetUserInfo  = function (connection , response  , userID) {
 
 
  qstring = "select * from user where user_id="+ userID + ";" ; 
-    console.log(qstring); 
+   //console.log(qstring); 
     connection.query(qstring ,  function (err, result , field ) {
       if (err) {
         console.log(err);
@@ -19,7 +19,7 @@ qstring = " select simulation_date.simulation_date_id,company.company_id, compan
               " where user_id="+ userID + 
               " and simulation_date.simulation_id = simulation.simulation_id and company.company_id = simulation.company_id "+
               " and applications.simulation_date_id = simulation_date.simulation_date_id;" ; 
-    console.log(qstring); 
+   //console.log(qstring); 
     connection.query(qstring ,  function (err, result , field ) {
       if (err) {
         console.log(err);

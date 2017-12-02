@@ -5,7 +5,7 @@ exports.GetAllVideos = function (connection, response, UserID) {
     "video_link , company_video.description , likes , profile_pic_link" +
     " from company_video , company where company.company_id = company_video.company_id " +
     "order by video_id desc ;";
-  console.log("the query: " + qstring + "\n");
+  //console.log("the query: " + qstring + "\n");
 
   // var sync = Futures.sequence;
   connection.query(qstring, function (err, result) {
@@ -38,7 +38,7 @@ function checkUserFollowLikeCompany(connection, response, Videos, index, UserID,
   var VideoID = Videos[index].video_id;
   var qstring = "select * from user_follow_company where " +
     "user_id = " + UserID + " and company_id = " + CompanyID + ";";
-  console.log("the query: " + qstring + "\n");
+  //console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -81,7 +81,7 @@ function checkUserFollowLikeCompany(connection, response, Videos, index, UserID,
 exports.LikeVideo = function (connection, response, userID, videoID) {
 
   var qstring = "INSERT INTO user_like_video VALUES(" + userID + "," + videoID + ");";
-  console.log("the query: " + qstring + "\n");
+  //console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -111,7 +111,7 @@ exports.DisLikeVideo = function (connection, response, userID, videoID) {
 
   var qstring = "DELETE FROM user_like_video where " +
     "user_id =" + userID + " and video_id = " + videoID + ";";
-  console.log("the query: " + qstring + "\n");
+ // console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -141,7 +141,7 @@ exports.AddVideo = function (connection, response, companyID, description, video
 
   var qstring = "INSERT INTO company_video (company_id , video_link , description, video_or_not) " +
     "VALUES(" + companyID + ",\"" + videoLink + "\",\"" + description + "\", " + videoOrNot + ");";
-  console.log("the query: " + qstring + "\n");
+ // console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
