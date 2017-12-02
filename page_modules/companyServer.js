@@ -11,7 +11,7 @@ exports.GetPromoCodeDiscount = function (connection, response  , promoCode, comp
        response.status(500).send(err);
       } else {
           
-          response.send(result);
+          response.send(result[0]);
           }
            
     });
@@ -175,7 +175,8 @@ var qstring = "delete from applications where user_id="+userID+ " and simulation
 }
 function getSimulationStatus (connection , simulations , index, simID , userID ,callback){
 
-  var  qstring =  "select status as status , payment_date from simulation , simulation_date , applications "+
+  var  qstring =  "select status as status , payment_date , date , "+
+                " simulation_date.simulation_date_id from simulation , simulation_date , applications "+
                 "where simulation.simulation_id = simulation_date.simulation_id and "+  
                 "simulation_date.simulation_date_id = applications.simulation_date_id "+
                 "and simulation.simulation_id ="+ simID+" and user_id="+userID ; 
@@ -201,11 +202,14 @@ function getSimulationStatus (connection , simulations , index, simID , userID ,
             // AcceptanceDeadline .setHours( AcceptanceDeadline.getHours() + 2 ) ; 
             simulations[index]["status"] = status ; 
             simulations[index]["acceptance_deadline"]= AcceptanceDeadline ; 
+            simulations[index]["applied_simulation_date"]= result[0].date ; 
+            simulations[index]["applied_simulation_date_id"]= result[0].simulation_date_id ; 
+            
         }
 
         else {
           simulations[index]["status"] ="";  
-           simulations[index]["Acceptance_deadline"]= "" ;
+          simulations[index]["Acceptance_deadline"]= "" ;
         }
 
         callback(simulations) ; 

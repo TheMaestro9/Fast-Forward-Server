@@ -84,19 +84,34 @@ var credentials = mysql_services[0].credentials;
 var connectionString = credentials.uri;
 
 // set up a new connection using our config details
-var connection = mysql.createConnection(credentials.uri);
+//var connection = mysql.createConnection(credentials.uri);
 
-connection.connect(function (err) {
-  if (err) {
-    console.log(err);
-  } else {
-    connection.query('CREATE TABLE words (id int auto_increment primary key, word varchar(256) NOT NULL, definition varchar(256) NOT NULL)', function (err, result) {
-      if (err) {
-        console.log(err)
-      }
-    });
-  }
-});
+
+//var connection = mysql.createConnection();
+var connection ; 
+
+function handleDisconnect() {
+  connection = mysql.createConnection(credentials.uri); // Recreate the connection, since
+                                                  // the old one cannot be reused.
+
+  connection.connect(function(err) {              // The server is either down
+    if(err) {                                     // or restarting (takes a while sometimes).
+      console.log('error when connecting to db:', err);
+      setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+    }                                     // to avoid a hot loop, and to allow our node script to
+  });                                     // process asynchronous requests in the meantime.
+                                          // If you're also serving http, display a 503 error.
+  connection.on('error', function(err) {
+    console.log('db error', err);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+      handleDisconnect();                         // lost due to either server restart, or a
+    } else {                                      // connnection idle timeout (the wait_timeout
+      throw err;                                  // server variable configures this)
+    }
+  });
+}
+
+handleDisconnect();
 
 // We can now set up our web server. First up we set it to serve static pages
 app.use(express.static(__dirname + '/public'));
@@ -1669,24 +1684,10 @@ app.get("/vote-for-date", function (request, response) {
 
 app.get("/get-promo-code-discount", function (request, response) {
 
-  var pormoCode = request.query.promo_code;
-  var companyID = request.query.company_id;
-  var toSend = {
-    "result": false
-  }
-  str = "select * from company_promo_code where (company_id =" + companyID + " or company_id = 0)" +
-    " and promo_code='" + pormoCode + "'";
-  console.log(str);
-  connection.query(str, function (err, result) {
-    if (err) {
-      console.log(err);
-      response.status(500).send(err);
-    } else {
-
-      response.send(result);
-    }
-
-  });
+  var promoCode = request.query.promo_code ;
+  var companyID = request.query.company_id ;  
+  var CompanyServer = require ("./page_modules/companyServer") ; 
+  CompanyServer.GetPromoCodeDiscount(connection , response , promoCode , companyID); 
 
 });
 
