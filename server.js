@@ -532,7 +532,8 @@ app.post("/register3", function (request, response) {
   console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
-      console.log(err.message);
+      console.log("error in Register3"); 
+      console.log(err);
       if (err.message.match("phone") && err.message.match("Duplicate")) {
         toSend.msg = "this phone number already exist";
         response.send(toSend);
@@ -542,8 +543,11 @@ app.post("/register3", function (request, response) {
         response.send(toSend);
       }
       else
-        response.send(err);
-
+      {
+        toSend.msg = "An error occured in the Server, Please contact support@fastforwardsim.com"+
+        " or send us a facebook message with your problem";
+        response.send(toSend);
+      }
     } else {
       getUserID(user_email, function (UID) {
         toSend.result = true;
@@ -601,7 +605,9 @@ app.post("/register2", function (request, response) {
   console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
-      console.log(err.message);
+      console.log("error in Register2")
+      //console.log(err.message);
+      console.log(err)
       if (err.message.match("phone") && err.message.match("Duplicate")) {
         toSend.msg = "this phone number already exist";
         response.send(toSend);
@@ -613,6 +619,8 @@ app.post("/register2", function (request, response) {
       else {
         // response.send(err); 
         //  toSend.msg = "fuck you "; 
+        toSend.msg = "An error occured in the Server, Please contact support@fastforwardsim.com"+
+        " or send us a facebook message with your problem";
         response.send(toSend);
       }
     } else {
@@ -634,6 +642,28 @@ app.post("/register2", function (request, response) {
   });
 
 });
+
+app.get("/accepted-simulation", function(request, response) {
+  
+  var userId = request.query.user_id ;  
+  var currentDate  = new Date().toISOString().replace("T", " ").replace("Z", "");
+  currentDate = JSON.stringify(currentDate) ; 
+  var qstring = "select * from applications , simulation_date where user_id = "+userId+" and status = \"accepted\" " +
+  " and simulation_date.simulation_date_id = applications.simulation_date_id and"+
+  " date >" + currentDate ;  
+  console.log("the query: "+qstring +"\n"); 
+  connection.query(qstring , function (err, result) {
+    if (err) {
+      console.log(err);
+     response.status(500).send(err);
+    } else {
+        response.send(result) ; 
+      }
+
+    });
+ 
+});
+
 app.get("/get-ticket-price", function (request, response) {
 
   var UserID = request.query.user_id;
@@ -1910,7 +1940,7 @@ function getSimDetails(simulations, index, userID, callback) {
   var currentDate = new Date().toISOString().replace("T", " ").replace("Z", "")
   // get dates 
   var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" + SimID + " and date > '" + currentDate + "';";
-  console.log("the query: " + qstring + "\n");
+ // console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       // response.status(500).send(err);
