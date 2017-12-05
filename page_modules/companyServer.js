@@ -152,12 +152,13 @@ var qstring = "delete from applications where user_id="+userID+ " and simulation
 
 }
 function getSimulationStatus (connection , simulations , index, simID , userID ,callback){
-
+  var currentDate = new Date().toISOString().replace("T", " ").replace("Z", "") ;
+  currentDate = JSON.stringify (currentDate) ; 
   var  qstring =  "select status as status , payment_date , date , "+
                 " simulation_date.simulation_date_id from simulation , simulation_date , applications "+
                 "where simulation.simulation_id = simulation_date.simulation_id and "+  
                 "simulation_date.simulation_date_id = applications.simulation_date_id "+
-                "and simulation.simulation_id ="+ simID+" and user_id="+userID ; 
+                "and simulation.simulation_id ="+ simID+" and user_id="+userID+" and date >"+currentDate ; 
 
        console.log("the query: "+qstring +"\n"); 
       connection.query(qstring , function (err, result) {
@@ -169,7 +170,7 @@ function getSimulationStatus (connection , simulations , index, simID , userID ,
         if(result.length > 1 )
           simulations[index]["status"] ="Veiw Status";  
         else if (result.length === 1 ){
-            var currentDate = new Date () ; 
+            currentDate = new Date () ; 
             var AcceptanceDeadline = new Date( result[0].payment_date) ; 
            AcceptanceDeadline .setDate( AcceptanceDeadline.getDate() + 1 ) ; 
             var status = result[0].status;
