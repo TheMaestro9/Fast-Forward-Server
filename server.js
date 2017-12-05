@@ -644,7 +644,7 @@ app.post("/register2", function (request, response) {
 });
 
 app.get("/accepted-simulation", function(request, response) {
-  
+  console.log("heree")
   var userId = request.query.user_id ;  
   var currentDate  = new Date().toISOString().replace("T", " ").replace("Z", "");
   currentDate = JSON.stringify(currentDate) ; 
@@ -657,10 +657,23 @@ app.get("/accepted-simulation", function(request, response) {
       console.log(err);
      response.status(500).send(err);
     } else {
-        response.send(result) ; 
+        console.log("got first query")
       }
 
     });
+    var qstring1 = "UPDATE applications JOIN simulation_date on simulation_date.simulation_date_id = applications.simulation_date_id set status='Done' where applications.user_id = "+userId+" and applications.status = \"accepted\" " +
+    " and "+" simulation_date.date <" + currentDate ;  
+    console.log("the query: "+qstring1 +"\n"); 
+    connection.query(qstring1 , function (err, result) {
+      if (err) {
+        console.log(err);
+       response.status(500).send(err);
+      } else {
+        console.log("done")
+          response.send(result) ; 
+        }
+  
+      });
  
 });
 
