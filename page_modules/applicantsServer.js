@@ -45,7 +45,7 @@
           console.log(err);
          response.status(500).send(err);
         } else {
-          simulationName="select s.simulation_name from simulation s JOIN simulation_date sd ON s.simulation_id ="+simDateId;
+          simulationName="select s.simulation_name from simulation s JOIN simulation_date sd ON sd.simulation_date_id ="+simDateId;
           connection.query(simulationName,function(err,res){
             if (err) {
               console.log(err);
@@ -69,12 +69,14 @@
          console.log(err);
         response.status(500).send(err);
        } else {
-         simulationName="select s.simulation_name from simulation s JOIN simulation_date sd ON s.simulation_id ="+simDateId;
+         simulationName="select s.simulation_name from simulation s JOIN simulation_date sd ON sd.simulation_date_id ="+simDateId;
          connection.query(simulationName,function(err,res){
            if (err) {
              console.log(err);
             response.status(500).send(err);
            } else {
+            console.log("in accept applicants the first result" , result) ; 
+            console.log("in accept applicants the second res" , res) ; 
             GHF = require("./GlobalHelperFunctions") ; 
             GHF.SendAnEmail(result[0].user_email ,'Payment Notification',"Kindly, you are requested to pay "+price+"L.E for the "+res[0].simulation_name+" simulation.") ; 
            }})

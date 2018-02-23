@@ -88,22 +88,22 @@ var connectionString = credentials.uri;
 
 
 //var connection = mysql.createConnection();
-var connection ; 
+var connection;
 
 function handleDisconnect() {
   connection = mysql.createConnection(credentials.uri); // Recreate the connection, since
-                                                  // the old one cannot be reused.
+  // the old one cannot be reused.
 
-  connection.connect(function(err) {              // The server is either down
-    if(err) {                                     // or restarting (takes a while sometimes).
+  connection.connect(function (err) {              // The server is either down
+    if (err) {                                     // or restarting (takes a while sometimes).
       console.log('error when connecting to db:', err);
       setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
     }                                     // to avoid a hot loop, and to allow our node script to
   });                                     // process asynchronous requests in the meantime.
-                                          // If you're also serving http, display a 503 error.
-  connection.on('error', function(err) {
+  // If you're also serving http, display a 503 error.
+  connection.on('error', function (err) {
     console.log('db error', err);
-    if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
       handleDisconnect();                         // lost due to either server restart, or a
     } else {                                      // connnection idle timeout (the wait_timeout
       throw err;                                  // server variable configures this)
@@ -343,7 +343,7 @@ app.get("/query", function (request, response) {
 
   // execute a query on our database
   var qstring = request.query.q;
- // console.log(qstring);
+  // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -478,7 +478,7 @@ function insertInterests(userID, interests) {
 
 
     qstring = "insert into user_interests values (" + userID + ",'" + interests[i] + "')";
-   // console.log(qstring);
+    // console.log(qstring);
     connection.query(qstring, function (err, result) {
 
     });
@@ -532,7 +532,7 @@ app.post("/register3", function (request, response) {
   console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
-      console.log("error in Register3"); 
+      console.log("error in Register3");
       console.log(err);
       if (err.message.match("phone") && err.message.match("Duplicate")) {
         toSend.msg = "this phone number already exist";
@@ -542,10 +542,9 @@ app.post("/register3", function (request, response) {
         toSend.msg = "this email already exist";
         response.send(toSend);
       }
-      else
-      {
-        toSend.msg = "An error occured in the Server, Please contact support@fastforwardsim.com"+
-        " or send us a facebook message with your problem";
+      else {
+        toSend.msg = "An error occured in the Server, Please contact support@fastforwardsim.com" +
+          " or send us a facebook message with your problem";
         response.send(toSend);
       }
     } else {
@@ -619,8 +618,8 @@ app.post("/register2", function (request, response) {
       else {
         // response.send(err); 
         //  toSend.msg = "fuck you "; 
-        toSend.msg = "An error occured in the Server, Please contact support@fastforwardsim.com"+
-        " or send us a facebook message with your problem";
+        toSend.msg = "An error occured in the Server, Please contact support@fastforwardsim.com" +
+          " or send us a facebook message with your problem";
         response.send(toSend);
       }
     } else {
@@ -643,38 +642,94 @@ app.post("/register2", function (request, response) {
 
 });
 
-app.get("/accepted-simulation", function(request, response) {
+app.post("/add-to-user-wallet", function (request, response) {
+
+  var userId = request.body.user_id;
+  var wallet = request.body.wallet;
+  var vrVideo = require("./page_modules/vrVideoServer.js");
+  vrVideo.addToUserWallet(connection, response, userId , wallet);
+});
+
+app.post("/rate-vr-video", function (request, response) {
+
+  var userId = request.body.user_id;
+  var rate = request.body.rate;
+  var VrVideoId = request.body.vr_video_id ; 
+  var vrVideo = require("./page_modules/vrVideoServer.js");
+  vrVideo.RateVrVideo(connection, response, userId , rate , VrVideoId);
+});
+
+app.get("/get-user-name", function (request, response) {
+
+  var userEmail = request.query.user_email;
+  var vrVideo = require("./page_modules/vrVideoServer.js");
+  vrVideo.getNameFromMail(connection, response, userEmail);
+});
+
+
+app.get("/get-packages", function (request, response) {
+
+  var vrVideo = require("./page_modules/vrVideoServer.js");
+  vrVideo.getPackages(connection, response);
+});
+
+app.get("/vr-videos", function (request, response) {
+
+  var userId = request.query.user_id;
+  var vrVideo = require("./page_modules/vrVideoServer.js");
+  vrVideo.getVrVideos(connection, response, userId);
+});
+
+app.post("/unlock-video", function (request, response) {
+
+  var userId = request.body.user_id;
+  var vrVideoId = request.body.vr_video_id;
+  var vrVideo = require("./page_modules/vrVideoServer.js");
+  vrVideo.UnlockVideo(connection, response, userId, vrVideoId);
+});
+
+
+app.get("/vr-user-info", function (request, response) {
+
+  var userId = request.query.user_id;
+  var vrVideo = require("./page_modules/vrVideoServer.js");
+  vrVideo.getUserInfo(connection, response, userId);
+});
+
+
+app.get("/accepted-simulation", function (request, response) {
   console.log("heree")
-  var userId = request.query.user_id ;  
-  var currentDate  = new Date().toISOString().replace("T", " ").replace("Z", "");
-  currentDate = JSON.stringify(currentDate) ; 
-  var qstring = "select * from applications , simulation_date where user_id = "+userId+" and status = \"accepted\" " +
-  " and simulation_date.simulation_date_id = applications.simulation_date_id and"+
-  " date >" + currentDate ;  
-  console.log("the query: "+qstring +"\n"); 
-  connection.query(qstring , function (err, result) {
+  var userId = request.query.user_id;
+  var currentDate = new Date().toISOString().replace("T", " ").replace("Z", "");
+  currentDate = JSON.stringify(currentDate);
+  var qstring = "select * from applications , simulation_date where user_id = " + userId + " and status = \"accepted\" " +
+    " and simulation_date.simulation_date_id = applications.simulation_date_id and" +
+    " date >" + currentDate;
+  console.log("the query: " + qstring + "\n");
+  connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
-     response.status(500).send(err);
+      response.status(500).send(err);
     } else {
-        console.log("got first query")
-      }
+      console.log("got first query");
+      response.send(result);
+    }
 
-    });
-    var qstring1 = "UPDATE applications JOIN simulation_date on simulation_date.simulation_date_id = applications.simulation_date_id set status='Done' where applications.user_id = "+userId+" and applications.status = \"accepted\" " +
-    " and "+" simulation_date.date <" + currentDate ;  
-    console.log("the query: "+qstring1 +"\n"); 
-    connection.query(qstring1 , function (err, result) {
-      if (err) {
-        console.log(err);
-       response.status(500).send(err);
-      } else {
-        console.log("done")
-          response.send(result) ; 
-        }
-  
-      });
- 
+  });
+  var qstring1 = "UPDATE applications JOIN simulation_date on simulation_date.simulation_date_id = applications.simulation_date_id set status='Done' where applications.user_id = " + userId + " and applications.status = \"accepted\" " +
+    " and " + " simulation_date.date <" + currentDate;
+  console.log("the query: " + qstring1 + "\n");
+  connection.query(qstring1, function (err, result) {
+    if (err) {
+      console.log(err);
+      response.status(500).send(err);
+    } else {
+      console.log("done")
+      // response.send(result) ; 
+    }
+
+  });
+
 });
 
 app.get("/get-ticket-price", function (request, response) {
@@ -687,7 +742,7 @@ app.get("/get-ticket-price", function (request, response) {
   qstring = "select price from  promo_code_price , user_promo_code " +
     "where promo_code_price.promo_code = user_promo_code.promo_code and " +
     "user_id =" + UserID + " ; ";
- // console.log(qstring);
+  // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -917,12 +972,13 @@ function AuthenticationRequest(callback) {
 
 
 }
-function CreateOrder(data, UserID, Price, SimulationDateID, callback) {
+function CreateOrder(data, UserID, Price, item, operationType, callback) {
 
-
+  // item is the thing you are paying for ... for packages its the number of videos or wallet 
+  // for normal simulations it is the simulation date id 
   console.log("UserID", UserID);
   console.log("Price", Price);
-  console.log("simID", SimulationDateID);
+  console.log("simID", item);
   var unirest = require("unirest");
 
   //var unirest = require("unirest");
@@ -948,8 +1004,8 @@ function CreateOrder(data, UserID, Price, SimulationDateID, callback) {
     "user_id": UserID,
     "shipping_data": {
       "first_name": UserID,
-      "phone_number": "+201003978030",
-      "last_name": SimulationDateID,
+      "phone_number": operationType,
+      "last_name": item,
       "email": "mr@g.com",
       "apartment": "803",
       "floor": "42",
@@ -1050,7 +1106,7 @@ function CreatePaymentKey(data, price, callback) {
   req.send({
     "amount_cents": price + "00",
     "currency": "EGP",
-    "card_integration_id": "184",
+    "card_integration_id": "798",
     "order_id": data.orderId,
     "billing_data": {
       "apartment": "803",
@@ -1305,7 +1361,7 @@ app.post("/test", function (request, response) {
       // console.log("UserID", UserID); 
       //console.log("Price", Price); 
       //console.log("simID", SimulationDateID); 
-      CreateOrder(recObj, userID, Price, simulationDateID, function (dataRecieved1) {
+      CreateOrder(recObj, userID, Price, simulationDateID, 'simulation', function (dataRecieved1) {
         // InsertGarbage("data recived after the second step is"+dataRecieved1.orderId) ;
         CreatePaymentKey(dataRecieved1, Price, function (dataRecieved2) {
           //  var sendReq  = require ('request') ; 
@@ -1337,6 +1393,33 @@ app.post("/test", function (request, response) {
   });
 
 });
+
+
+app.post("/pay-for-package", function (request, response) {
+
+  var userID = request.body.user_id;
+  var wallet = request.body.wallet;
+  var Price = request.body.price;
+
+  AuthenticationRequest(function (recObj) {
+
+    CreateOrder(recObj, userID, Price, wallet, 'package', function (dataRecieved1) {
+
+      CreatePaymentKey(dataRecieved1, Price, function (dataRecieved2) {
+
+        var toSend = {
+          "url": "https://accept.paymobsolutions.com/api/acceptance/iframes/2260?payment_token=" + dataRecieved2.paymentToken
+        }
+        response.send(toSend);
+      });
+
+    });
+
+  });
+
+});
+
+
 
 app.get("/test", function (request, response) {
 
@@ -1413,22 +1496,23 @@ app.get("/test1", function (request, response) {
 
 
 });
-app.post("/paymob_notification_callback?hmac=9FAEDD1FF8E8B2E9B78E6BDB60C2A14A", function (request, response) {
 
-  console.log("i have got a biiig response", request.body);
-  var str = "INSERT INTO Garbage VALUES('HELLO POst');"
-  connection.query(str, function (err, result) {
-    if (err) {
-      console.log(err);
-      response.status(500).send(err);
-    } else {
-      //console.log(result);
-      // response.send(result);
-    }
+// app.post("/paymob_notification_callback?hmac=9FAEDD1FF8E8B2E9B78E6BDB60C2A14A", function (request, response) {
 
-  });
-  response.send();
-});
+//   console.log("i have got a biiig response", request.body);
+//   var str = "INSERT INTO Garbage VALUES('HELLO POst');"
+//   connection.query(str, function (err, result) {
+//     if (err) {
+//       console.log(err);
+//       response.status(500).send(err);
+//     } else {
+//       //console.log(result);
+//       // response.send(result);
+//     }
+
+//   });
+//   response.send();
+// });
 
 
 function ConfirmPayment(userID, simulationDateID) {
@@ -1454,7 +1538,9 @@ app.post("/paymob_notification_callback", function (request, response) {
 
   var price = request.body.obj.order.amount_cents;
 
-  var simulationDateID = request.body.obj.order.shipping_data.last_name;
+  var item = request.body.obj.order.shipping_data.last_name;
+
+  var orderType = request.body.obj.order.shipping_data.phone_number;
 
   var success = request.body.obj.success;
 
@@ -1462,42 +1548,38 @@ app.post("/paymob_notification_callback", function (request, response) {
     success = true;                // the mobile application because no success parameter is passed
   //  InsertGarbage ("we got a post "+ success); 
   if (success == true) {
+    console.log("orderType is , " , orderType) ; 
+    if (orderType == 'simulation') {
 
-    var PaymentDate = new Date().toISOString().replace("T", " ").replace("Z", "");
+      var PaymentDate = new Date().toISOString().replace("T", " ").replace("Z", "");
 
-    var qstring = "update applications set status = 'accepted' , payment_date = '" + PaymentDate + "' where user_id = " + UserID +
-      " and simulation_date_id=" + simulationDateID;
+      var qstring = "update applications set status = 'accepted' , payment_date = '" + PaymentDate + "' where user_id = " + UserID +
+        " and simulation_date_id=" + item;
+    }
+    else {
 
-    InsertGarbage(qstring);
+      var qstring = "update user set wallet = wallet +"+item+" where user_id = " + UserID
+
+    }
+
+    console.log("query in paymob post success", qstring);
     connection.query(qstring, function (err, result) {
       if (err) {
         console.log(err);
-        response.status(500).send(err);
+        response.send();
       } else {
 
-        response.send(result);
+        response.send();
       }
 
     });
   }
-  else
-    InsertGarbage("POST success is false");
-  //  InsertGarbage("Hello Post id "+ UserID) ; 
-  //  InsertGarbage ("Hello Post price "+ price) ; 
-  // InsertGarbage ("Hello Post form simID "+ simulationDateID) ; 
+  else{
+    console.log("transaction was not successfull");
+    response.send(); 
+  }
 
-  // var str = "INSERT INTO Garbage VALUES('HELLO POst "+UserID+"');"
-  // connection.query(str , function (err, result) {
-  //   if (err) {
-  //     console.log(err);
-  //    response.status(500).send(err);
-  //   } else {
-  //     //console.log(result);
-  //   // response.send(result);
-  //   }
-
-  // });
-  response.send();
+  // response.send();
 });
 
 app.get("/paymob_txn_response_callback", function (request, response) {
@@ -1516,7 +1598,7 @@ app.get("/paymob_txn_response_callback", function (request, response) {
   // });
 
   var success = request.query.success;
-  InsertGarbage("we got a transaction response and the success is " + success);
+  console.log("in paymob get success = ", success);
 
   if (success == "true") {
     fs.readFile('successTransactionMSG.html', 'utf8', function (err, data) {
@@ -1727,10 +1809,10 @@ app.get("/vote-for-date", function (request, response) {
 
 app.get("/get-promo-code-discount", function (request, response) {
 
-  var promoCode = request.query.promo_code ;
-  var companyID = request.query.company_id ;  
-  var CompanyServer = require ("./page_modules/companyServer") ; 
-  CompanyServer.GetPromoCodeDiscount(connection , response , promoCode , companyID); 
+  var promoCode = request.query.promo_code;
+  var companyID = request.query.company_id;
+  var CompanyServer = require("./page_modules/companyServer");
+  CompanyServer.GetPromoCodeDiscount(connection, response, promoCode, companyID);
 
 });
 
@@ -1770,7 +1852,7 @@ app.get("/all-companies", function (request, response) {
       console.log(err);
       response.status(500).send(err);
     } else {
-     // ////console.log(result);
+      // ////console.log(result);
       response.send(result);
     }
 
@@ -1813,7 +1895,7 @@ app.get("/queryList", function (request, response) {
     qstring = qList[i];
     if (qstring.length == 0)
       continue;
-   // console.log(qstring);
+    // console.log(qstring);
     connection.query(qstring, function (err, result) {
       if (err) {
         console.log(err);
@@ -1953,7 +2035,7 @@ function getSimDetails(simulations, index, userID, callback) {
   var currentDate = new Date().toISOString().replace("T", " ").replace("Z", "")
   // get dates 
   var qstring = "select * from simulation_date where votes = 0 and  simulation_id=" + SimID + " and date > '" + currentDate + "';";
- // console.log("the query: " + qstring + "\n");
+  // console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
     if (err) {
       // response.status(500).send(err);
@@ -2074,7 +2156,7 @@ app.get("/gar", function (request, response) {
   var q = request.query.q;
 
   qstring = "INSERT INTO Garbage VALUES ('" + q + "');";
- // console.log(qstring);
+  // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -2091,7 +2173,7 @@ app.get("/gar", function (request, response) {
 function insertNewDate(simID, date, response, callback) {
 
   qstring = "INSERT INTO simulation_date ( simulation_id  , date , votes ) VALUES (" + simID + ",'" + date + "',1);";
- // console.log(qstring);
+  // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -2110,7 +2192,7 @@ function insertNewDate(simID, date, response, callback) {
 function getSimDateID(simID, date, response, callback) {
 
   qstring = "select simulation_date_id from simulation_date where simulation_id=" + simID + " and date ='" + date + "'";
- // console.log(qstring);
+  // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -2130,7 +2212,7 @@ function getSimDateID(simID, date, response, callback) {
 function insertUserVote(userID, simDateID, response, callback) {
 
   qstring = "INSERT INTO date_voting  VALUES (" + userID + "," + simDateID + ");";
- // console.log(qstring);
+  // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -2189,7 +2271,7 @@ app.get("/get-applicants-details", function (request, response) {
 
 
 
- //// console.log(qstring);
+  //// console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -2209,7 +2291,7 @@ app.get("/dateso", function (request, response) {
 
 
   qstring = "select * from simulation_date";
- // console.log(qstring);
+  // console.log(qstring);
   connection.query(qstring, function (err, result) {
     if (err) {
       console.log(err);
@@ -2238,43 +2320,43 @@ app.get("/forget1", function (request, response) {
   response.sendFile(__dirname + '/public/forget.html')
 });
 
-app.post("/change", function(request, response) {
-  console.log("REQ PASS",request.body.pwd);
+app.post("/change", function (request, response) {
+  console.log("REQ PASS", request.body.pwd);
   var id = request.body.userID.split('=')[1]
-  console.log("IDDDD",id)
+  console.log("IDDDD", id)
   var wordArray = CryptoJS.enc.Utf8.parse(request.body.pwd);
   var base64 = CryptoJS.enc.Base64.stringify(wordArray);
   console.log('encrypted:', base64);
-  var qstring = "update user set password='"+base64+ "' where user_id="+id;
-connection.query(qstring , function (err, result) {
-if (err) {
-console.log(err.message); 
-response.send(err) ;
-} else {
+  var qstring = "update user set password='" + base64 + "' where user_id=" + id;
+  connection.query(qstring, function (err, result) {
+    if (err) {
+      console.log(err.message);
+      response.send(err);
+    } else {
 
-console.log("changed forgotten pass successfully");
-}
-});
+      console.log("changed forgotten pass successfully");
+    }
+  });
 });
 
-app.get("/messageCompany",function(request,response){
-var con = request.query.content; 
-console.log("content",con,request.query.content)
-var value = con.split(':')[1]
-// var id=value[1];
-  console.log("IDDDD",value)
-var qstring = "select user_name from user where user_id ="+value; 
-console.log("the query: "+qstring +"\n"); 
-connection.query(qstring , function (err, result) {
-  if (err) {
-    console.log(err);
-   response.status(500).send(err);
-  }
-  else{
-    var loginServer = require ("./page_modules/GlobalHelperFunctions") ; 
-    loginServer.SendAnEmail("support@fastforwardsim.com","Message",con+" and name: "+result[0].user_name);
-  }
-});
+app.get("/messageCompany", function (request, response) {
+  var con = request.query.content;
+  console.log("content", con, request.query.content)
+  var value = con.split(':')[1]
+  // var id=value[1];
+  console.log("IDDDD", value)
+  var qstring = "select user_name from user where user_id =" + value;
+  console.log("the query: " + qstring + "\n");
+  connection.query(qstring, function (err, result) {
+    if (err) {
+      console.log(err);
+      response.status(500).send(err);
+    }
+    else {
+      var loginServer = require("./page_modules/GlobalHelperFunctions");
+      loginServer.SendAnEmail("support@fastforwardsim.com", "Message", con + " and name: " + result[0].user_name);
+    }
+  });
 
 })
 app.get("/testEncrypt", function (request, response) {
@@ -2289,21 +2371,21 @@ app.get("/loginEncrypted", function (request, response) {
 
   // execute a query on our database
   //var q = request.query.q ; 
-  var userEmail = request.query.user_email ; 
-  var password = request.query.password ; 
-  
+  var userEmail = request.query.user_email;
+  var password = request.query.password;
+
 
   console.log("IN GETTTTTTTTTTTTTTTTTTTTTT")
   var loginServer = require("./page_modules/loginServer");
-  loginServer.LoginAfterEncryption(connection, response, userEmail, password );
+  loginServer.LoginAfterEncryption(connection, response, userEmail, password);
 });
 app.get("/get-feedback-details", function (request, response) {
   var simulationDate = request.query.simulation_date_id;
-  console.log("datteeee", request.query.simulation_date_id) ; 
+  console.log("datteeee", request.query.simulation_date_id);
 
-  var qstring = "select c.company_name,c.profile_pic_link,s.simulation_name"+
-  " from simulation_date sd JOIN simulation s ON s.simulation_id = sd.simulation_id "+
-  " JOIN company c ON s.company_id=c.company_id where sd.simulation_date_id =" + simulationDate;
+  var qstring = "select c.company_name,c.profile_pic_link,s.simulation_name" +
+    " from simulation_date sd JOIN simulation s ON s.simulation_id = sd.simulation_id " +
+    " JOIN company c ON s.company_id=c.company_id where sd.simulation_date_id =" + simulationDate;
 
   console.log("the query: " + qstring + "\n");
   connection.query(qstring, function (err, result) {
@@ -2311,8 +2393,8 @@ app.get("/get-feedback-details", function (request, response) {
       console.log(err);
     //response.status(500).send(err);
     else {
-      console.log("Result", result) ; 
-      response.send(result) ; 
+      console.log("Result", result);
+      response.send(result);
     }
 
   });
@@ -2325,7 +2407,7 @@ app.post("/add-feedback", function (request, response) {
   var rating = request.body.rating;
   //  var bd = new Date (birthDate); WW
   // execute a query on our database
-  notes = JSON.stringify(notes) ; 
+  notes = JSON.stringify(notes);
   var qstring = "INSERT INTO feedback (user_id,simulation_date_id,notes,rating) VALUES("
     + user_id + ",'" + simulationDate + "'," + notes + "," + rating + ")";
   console.log("the query: " + qstring + "\n");
@@ -2335,8 +2417,8 @@ app.post("/add-feedback", function (request, response) {
 
     } else {
 
-      console.log("Feedback added"); 
-      response.send(result); 
+      console.log("Feedback added");
+      response.send(result);
     }
 
 
@@ -2347,11 +2429,11 @@ app.post("/add-feedback", function (request, response) {
 
 app.get("/encrypt-one-password", function (request, response) {
 
-  var userId = request.query.user_id ; 
+  var userId = request.query.user_id;
   var loginServer = require("./page_modules/loginServer");
-  loginServer.encryptOnePassword(connection, response , userId);
+  loginServer.encryptOnePassword(connection, response, userId);
 
-}); 
+});
 // Now we go and listen for a connection.
 app.listen(port);
 
