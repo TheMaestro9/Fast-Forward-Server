@@ -676,8 +676,9 @@ app.get("/get-packages", function (request, response) {
 app.get("/vr-videos", function (request, response) {
 
   var userId = request.query.user_id;
+  var isUniversity = request.query.is_university;
   var vrVideo = require("./page_modules/vrVideoServer.js");
-  vrVideo.getVrVideos(connection, response, userId);
+  vrVideo.getVrVideos(connection, response, userId ,isUniversity);
 });
 
 app.post("/unlock-video", function (request, response) {

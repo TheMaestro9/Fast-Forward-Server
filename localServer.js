@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2016 IBM Corp. All Rights Reserved.
  *
@@ -1375,10 +1376,41 @@ console.log("dare" , unlockDate)
 
 }
 
- app.get("/test1", function(request, response) {
+ app.get("/count", function(request, response) {
 
-  var phone = request.query.phone ; 
-  response.send(checkPhoneNumber(phone)) ; 
+    var array = request.query.array ; 
+
+    array = array.split(",")
+
+    x = [] 
+    x[2] = 1 ; 
+    console.log(x)
+
+    for ( i = 0 ; i < array.length ; i ++){
+      array[i] = parseInt(array[i])
+    }
+    console.log(array)
+    var max_in_array =  Math.max(...array)
+    var countArray = [] 
+    for( i = 0 ; i <= max_in_array ; i++ ) 
+      countArray[i] = 0 ; 
+
+    console.log(countArray)
+
+    for(i = 0 ; i < array.length ; i ++ )
+      countArray[array[i]] ++ ; 
+
+   var toSend = { 
+  
+    }
+
+    for(i  = 0 ; i <countArray.length ; i++){
+
+      if(countArray[i]!=0)
+        toSend[i] = countArray[i] ; 
+    }
+
+    response.send(toSend); 
  }) ;
 
  function checkPhoneNumber(phone) {

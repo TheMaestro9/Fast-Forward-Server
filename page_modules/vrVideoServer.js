@@ -142,10 +142,11 @@ function removeUnlock(connection, userId, vrVideoId, unlockDate) {
   });
 }
 
-exports.getVrVideos = function (connection, response, userId) {
+exports.getVrVideos = function (connection, response, userId , isUniversity) {
 
-
-  var qstring = "select * from vr_video order by video_id";
+  if(typeof(isUniversity=='undefined'))
+    isUniversity = 0 ;
+  var qstring = "select * from vr_video where is_university="+isUniversity+" order by video_index" ;
 
   connection.query(qstring, function (err, result) {
     if (err) {
